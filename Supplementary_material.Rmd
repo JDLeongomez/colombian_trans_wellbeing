@@ -270,11 +270,11 @@ tibble(
     general = "95\\\\% confidence intervals were calculated with 1,000 bootstrap samples.
            Standardized Cronbach's alpha ($\\\\alpha$) coefficients were computed.
            $^1$\\\\cite{EAG};
-           $^2$\\\\cite{EBR};
-           $^3$\\\\cite{EBD};
-           $^4$\\\\cite{MOS};
-           $^5$\\\\cite{PANAS};
-           $^6$\\\\cite{PANAS}",
+           $^2$\\\\cite{SWLS};
+           $^3$\\\\cite{EBR};
+           $^4$\\\\cite{EBD};
+           $^5$\\\\cite{MOS};
+           $^6$\\\\cite{PANAS}.",
     threeparttable = TRUE, footnote_as_chunk = TRUE, escape = FALSE
   )
 ```
