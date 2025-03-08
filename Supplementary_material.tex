@@ -1,0 +1,433 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+%
+\documentclass[
+  bookmarksnumbered]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=2cm]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{48,48,48}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.81,0.69}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{\textbf{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.86,0.64,0.64}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.86,0.64,0.64}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{#1}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{\textbf{#1}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.86,0.64,0.64}{\textbf{#1}}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.94,0.87,0.69}{#1}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.87,0.87,0.75}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.86,0.86,0.80}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.76,0.75,0.62}{#1}}
+\newcommand{\ExtensionTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.75,0.75,0.82}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.94,0.94,0.56}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{\textbf{#1}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.94,0.87,0.69}{#1}}
+\newcommand{\NormalTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.94,0.94,0.82}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.94,0.94,0.56}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{1.00,0.81,0.69}{\textbf{#1}}}
+\newcommand{\RegionMarkerTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.86,0.64,0.64}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.80,0.58,0.58}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.80,0.58,0.58}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.80,0.80,0.80}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.80,0.58,0.58}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.50,0.62,0.50}{\textbf{#1}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage{caption} \usepackage{float} \floatplacement{figure}{H} \usepackage[utf8]{inputenc} \usepackage{fancyhdr} \pagestyle{fancy} \usepackage{hanging} \lhead{Reyes-Rodríguez \& Leongómez} \rhead{\textit{\colorbox{pink}{Colombian trans wellbeing}}} \renewcommand{\abstractname}{Description} \usepackage[british]{babel} \usepackage{csquotes} \usepackage[style=apa,backend=biber]{biblatex} \DeclareLanguageMapping{british}{british-apa} \usepackage{hanging} \usepackage{amsthm,amssymb,amsfonts} \usepackage{tikz,lipsum,lmodern} \usepackage{multicol} \usepackage{orcidlink} \newcommand{\opensupplement}{\setcounter{table}{0} \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{S\arabic{figure}}} \newcommand{\closesupplement}{\setcounter{table}{0} \renewcommand{\thetable}{\arabic{table}} \setcounter{figure}{0} \renewcommand{\thefigure}{\arabic{figure}}} \usepackage{multirow,booktabs,setspace} \DeclareCaptionLabelSeparator{point}{. } \DeclareCaptionLabelSeparator{point}{. } \captionsetup[table]{labelfont=bf, textfont=it, format=plain, labelsep=point, skip=5pt} \captionsetup[figure]{labelfont=bf, format=plain, justification=justified, singlelinecheck=false, labelsep=point, skip=5pt}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\usepackage[]{biblatex}
+\addbibresource{bib/Bibliography.bib}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  pdfauthor={Maria Fernanda Reyes-Rodríguez 1,; Juan David Leongómez 2},
+  colorlinks=true,
+  linkcolor={gray},
+  filecolor={Maroon},
+  citecolor={gray},
+  urlcolor={blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{\colorbox{pink}{Colombian trans wellbeing}}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{Code and analyses}
+\author{Maria Fernanda Reyes-Rodríguez \orcidlink{0000-0002-2645-5092}\textsuperscript{1,*} \and Juan David Leongómez \orcidlink{0000-0002-0092-6298}\textsuperscript{2}}
+\date{08 March, 2025}
+
+\begin{document}
+\maketitle
+
+\textsuperscript{1} Department of Psychology, University of Los Andes, Bogota 111211, Colombia\\
+\textsuperscript{2} CODEC: Ciencias Cognitivas y del Comportamiento, Universidad El Bosque, Bogotá 110121, Colombia.
+
+\textsuperscript{*} Correspondence: \href{mailto:m.reyes8@uniandes.edu.co}{\href{mailto:m.reyes8@uniandes.edu.co}{\nolinkurl{m.reyes8@uniandes.edu.co}}}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\begin{center}
+\textbf{Description}
+\end{center}
+
+\par
+\begingroup
+\leftskip3em
+\rightskip\leftskip
+
+This document contains all code, and step by step explanations for all analyses, figures and tables (including supplementary figures and tables) for:
+
+\begin{hangparas}{.25in}{1}
+Reyes-Rodríguez, M. F., \&  Leongómez, J. D. (in prep). \textit{\colorbox{pink}{Colombian trans wellbeing}}
+\end{hangparas}
+
+Data are available on the Open Science Framework (OSF): \colorbox{pink}{https://doi.org/10.XXXX/OSF.IO/XXXXX}. The analyses were designed by Maria Fernanda Reyes-Rodríguez and Juan David Leongómez. This document and its underlying code were created in R Markdown by Juan David Leongómez using R and \LaTeX, ensuring full reproducibility.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\par
+\endgroup
+
+{\hypersetup{hidelinks}
+\setcounter{tocdepth}{6}
+\tableofcontents
+}
+\opensupplement
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Preliminaries}\label{preliminaries}
+
+\subsection{Load packages}\label{load-packages}
+
+This file was created using \texttt{knitr} \autocite{knitrcit}, mostly using \texttt{tidyverse} \autocite{tidyversecit} syntax. As such, data wrangling was mainly done using packages such as \texttt{dplyr} \autocite{dplyrcit}, and most figures were created or modified using \texttt{ggplot2} \autocite{ggplotcit}. Tables were created using \texttt{knitr::kable} and \texttt{kableExtra} \autocite{kableExtracit}.
+
+Multi-model inference and model averaging was achieved using \texttt{MuMIn} \autocite{MuMIncit}, and model assumptions were performed using \texttt{performance} \autocite{ludecke2021}.
+
+All packages used in this file can be directly installed from the Comprehensive R Archive Network (\href{https://cran.r-project.org/}{CRAN}). For a complete list of packages used to create this file, and their versions, see section \ref{session}, at the end of the document.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ltm)}
+\FunctionTok{library}\NormalTok{(psych)        }\CommentTok{\# For statistical functions (e.g., Cronbach\textquotesingle{}s alpha)}
+\FunctionTok{library}\NormalTok{(MuMIn)        }\CommentTok{\# For model selection and averaging}
+\FunctionTok{library}\NormalTok{(performance)  }\CommentTok{\# For model performance metrics}
+\FunctionTok{library}\NormalTok{(readr)        }\CommentTok{\# For reading data files}
+\FunctionTok{library}\NormalTok{(scales)       }\CommentTok{\# For percent formatting}
+\FunctionTok{library}\NormalTok{(knitr)}
+\FunctionTok{library}\NormalTok{(kableExtra)}
+\FunctionTok{library}\NormalTok{(tidyverse)    }\CommentTok{\# For data manipulation and piping}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Load data}\label{load-data}
+
+Load raw CSV data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{data\_RAW }\OtherTok{\textless{}{-}} \FunctionTok{read\_csv}\NormalTok{(}\StringTok{"data/data.csv"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Define PANAS Subscales (Positive \& Negative Affect)}\label{define-panas-subscales-positive-negative-affect}
+
+XXXXXXX
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# List of PANAS Positive Affect (PANAS\_P) items}
+\NormalTok{PANAS\_P }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"PANASB\_1"}\NormalTok{, }\StringTok{"PANASB\_3"}\NormalTok{, }\StringTok{"PANASB\_5"}\NormalTok{, }\StringTok{"PANASB\_9"}\NormalTok{, }
+             \StringTok{"PANASB\_10"}\NormalTok{, }\StringTok{"PANASB\_12"}\NormalTok{, }\StringTok{"PANASB\_14"}\NormalTok{, }\StringTok{"PANASB\_16"}\NormalTok{, }
+             \StringTok{"PANASB\_17"}\NormalTok{, }\StringTok{"PANASB\_19"}\NormalTok{)}
+
+\CommentTok{\# List of PANAS Negative Affect (PANAS\_N) items}
+\NormalTok{PANAS\_N }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{(}\StringTok{"PANASB\_2"}\NormalTok{, }\StringTok{"PANASB\_4"}\NormalTok{, }\StringTok{"PANASB\_6"}\NormalTok{, }\StringTok{"PANASB\_7"}\NormalTok{,}
+             \StringTok{"PANASB\_8"}\NormalTok{, }\StringTok{"PANASB\_11"}\NormalTok{, }\StringTok{"PANASB\_13"}\NormalTok{, }\StringTok{"PANASB\_15"}\NormalTok{,}
+             \StringTok{"PANASB\_18"}\NormalTok{, }\StringTok{"PANASB\_20"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{Internal consistency}\label{internal-consistency}
+
+\subsubsection{Calculate Cronbach's Alpha for Different Scales}\label{calculate-cronbachs-alpha-for-different-scales}
+
+To measure the internal consistency of these tests, we used standardized Cronbach's alpha (\(\alpha\) or Tau-equivalent reliability: \(\rho_{T}\)) coefficients, using the function \texttt{cronbach.alpha} from the package \texttt{ltm} \autocite{LtmPackageLatent2006}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Compute Cronbach\textquotesingle{}s alpha for the Self{-}Efficacy (EAG) scale}
+\NormalTok{alpha\_EAG }\OtherTok{\textless{}{-}}\NormalTok{ data\_RAW }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), }\SpecialCharTok{\textasciitilde{}} \FunctionTok{na\_if}\NormalTok{(., }\DecValTok{99}\NormalTok{))) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Replace 99 with NA (missing values)}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{starts\_with}\NormalTok{(}\StringTok{"EAG\_"}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Select all columns starting with "EAG\_"}
+  \FunctionTok{drop\_na}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{cronbach.alpha}\NormalTok{(}\AttributeTok{CI =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{standardized =} \ConstantTok{TRUE}\NormalTok{)  }\CommentTok{\# Compute Cronbach’s alpha}
+
+\CommentTok{\# Compute Cronbach\textquotesingle{}s alpha for the Life{-}Satisfaction (SWLS) scale}
+\NormalTok{alpha\_SWLS }\OtherTok{\textless{}{-}}\NormalTok{ data\_RAW }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), }\SpecialCharTok{\textasciitilde{}} \FunctionTok{na\_if}\NormalTok{(., }\DecValTok{99}\NormalTok{))) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Replace 99 with NA}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{starts\_with}\NormalTok{(}\StringTok{"SWLS\_"}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Select all columns starting with "SWLS\_"}
+  \FunctionTok{drop\_na}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{cronbach.alpha}\NormalTok{(}\AttributeTok{CI =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{standardized =} \ConstantTok{TRUE}\NormalTok{)}
+
+\CommentTok{\# Compute Cronbach\textquotesingle{}s alpha for the Resilience (EBR) scale}
+\NormalTok{alpha\_EBR }\OtherTok{\textless{}{-}}\NormalTok{ data\_RAW }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), }\SpecialCharTok{\textasciitilde{}} \FunctionTok{na\_if}\NormalTok{(., }\DecValTok{99}\NormalTok{))) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Replace 99 with NA}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{starts\_with}\NormalTok{(}\StringTok{"EBR\_"}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Select all columns starting with "EBR\_"}
+  \FunctionTok{drop\_na}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{cronbach.alpha}\NormalTok{(}\AttributeTok{CI =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{standardized =} \ConstantTok{TRUE}\NormalTok{)}
+
+\CommentTok{\# Compute Cronbach\textquotesingle{}s alpha for the Depression (EBD) scale (after recoding responses)}
+\NormalTok{alpha\_EBD }\OtherTok{\textless{}{-}}\NormalTok{ data\_RAW }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), }\SpecialCharTok{\textasciitilde{}} \FunctionTok{na\_if}\NormalTok{(., }\DecValTok{99}\NormalTok{))) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Replace 99 with NA}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{starts\_with}\NormalTok{(}\StringTok{"EBD\_"}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Select all columns starting with "EBD\_"}
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{everything}\NormalTok{(), }\SpecialCharTok{\textasciitilde{}} \FunctionTok{ifelse}\NormalTok{(}\FunctionTok{is.na}\NormalTok{(.x), }\ConstantTok{NA}\NormalTok{, .x }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{))) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Adjust values}
+  \FunctionTok{drop\_na}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{cronbach.alpha}\NormalTok{(}\AttributeTok{CI =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{standardized =} \ConstantTok{TRUE}\NormalTok{)}
+
+\CommentTok{\# Compute Cronbach\textquotesingle{}s alpha for the Social Support (MOS2) scale}
+\NormalTok{alpha\_MOS2 }\OtherTok{\textless{}{-}}\NormalTok{ data\_RAW }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), }\SpecialCharTok{\textasciitilde{}} \FunctionTok{na\_if}\NormalTok{(., }\DecValTok{99}\NormalTok{))) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Replace 99 with NA}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{starts\_with}\NormalTok{(}\StringTok{"MOS2\_"}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Select all columns starting with "MOS2\_"}
+  \FunctionTok{drop\_na}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{cronbach.alpha}\NormalTok{(}\AttributeTok{CI =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{standardized =} \ConstantTok{TRUE}\NormalTok{)}
+
+\CommentTok{\# Compute Cronbach\textquotesingle{}s alpha for PANAS Positive Affect (PANAS\_P)}
+\NormalTok{alpha\_PANAS\_P }\OtherTok{\textless{}{-}}\NormalTok{ data\_RAW }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), }\SpecialCharTok{\textasciitilde{}} \FunctionTok{na\_if}\NormalTok{(., }\DecValTok{99}\NormalTok{))) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Replace 99 with NA}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{all\_of}\NormalTok{(PANAS\_P)) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Select PANAS\_P variables}
+  \FunctionTok{drop\_na}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{cronbach.alpha}\NormalTok{(}\AttributeTok{CI =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{standardized =} \ConstantTok{TRUE}\NormalTok{)}
+
+\CommentTok{\# Compute Cronbach\textquotesingle{}s alpha for PANAS Negative Affect (PANAS\_N)}
+\NormalTok{alpha\_PANAS\_N }\OtherTok{\textless{}{-}}\NormalTok{ data\_RAW }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), }\SpecialCharTok{\textasciitilde{}} \FunctionTok{na\_if}\NormalTok{(., }\DecValTok{99}\NormalTok{))) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Replace 99 with NA}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{all\_of}\NormalTok{(PANAS\_N)) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Select PANAS\_N variables}
+  \FunctionTok{drop\_na}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{cronbach.alpha}\NormalTok{(}\AttributeTok{CI =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{standardized =} \ConstantTok{TRUE}\NormalTok{)}
+
+\CommentTok{\# Compute Cronbach\textquotesingle{}s alpha for Community Cohesion (PCPS3) scale}
+\NormalTok{alpha\_PCPS3 }\OtherTok{\textless{}{-}}\NormalTok{ data\_RAW }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{where}\NormalTok{(is.numeric), }\SpecialCharTok{\textasciitilde{}} \FunctionTok{na\_if}\NormalTok{(., }\DecValTok{99}\NormalTok{))) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Replace 99 with NA}
+  \FunctionTok{select}\NormalTok{(}\FunctionTok{starts\_with}\NormalTok{(}\StringTok{"PCPS3\_"}\NormalTok{)) }\SpecialCharTok{|\textgreater{}}  \CommentTok{\# Select all columns starting with "PCPS3\_"}
+  \FunctionTok{drop\_na}\NormalTok{() }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{cronbach.alpha}\NormalTok{(}\AttributeTok{CI =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{standardized =} \ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Table \ref{tab:tab-cronbach-alpha}. Internal consistency of measured scales}\label{table-reftabtab-cronbach-alpha.-internal-consistency-of-measured-scales}
+
+The internal consistency of the measured scales was generally strong, with Cronbach's \(\alpha\) values ranging from 0.767 to 0.977. In particular, the Social Support (MOS2) and Self-Efficacy (EAG) scales exhibited excellent internal consistency, while the Depression (EBD) and Community Cohesion (PCPS3) scales had acceptable reliability, suggesting a slightly lower but still adequate level of internal consistency.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{tibble}\NormalTok{(}
+  \AttributeTok{Scale =} \FunctionTok{c}\NormalTok{(}\StringTok{"Self{-}Efficacy$\^{}1$"}\NormalTok{,}
+            \StringTok{"Life{-}Satisfaction$\^{}2$"}\NormalTok{,}
+            \StringTok{"Resilience$\^{}3$"}\NormalTok{,}
+            \StringTok{"Depression$\^{}4$"}\NormalTok{,}
+            \StringTok{"Social Support$\^{}5$"}\NormalTok{,}
+            \StringTok{"PANAS Positive$\^{}6$"}\NormalTok{,}
+            \StringTok{"PANAS Negative$\^{}6$"}\NormalTok{,}
+            \StringTok{"Community Cohesion$\^{}x$"}\NormalTok{),}
+  \AttributeTok{p =} \FunctionTok{c}\NormalTok{(alpha\_EAG}\SpecialCharTok{$}\NormalTok{p, alpha\_SWLS}\SpecialCharTok{$}\NormalTok{p, alpha\_EBR}\SpecialCharTok{$}\NormalTok{p, alpha\_EBD}\SpecialCharTok{$}\NormalTok{p, alpha\_MOS2}\SpecialCharTok{$}\NormalTok{p,}
+\NormalTok{        alpha\_PANAS\_P}\SpecialCharTok{$}\NormalTok{p, alpha\_PANAS\_N}\SpecialCharTok{$}\NormalTok{p, alpha\_PCPS3}\SpecialCharTok{$}\NormalTok{p),}
+  \AttributeTok{n =} \FunctionTok{c}\NormalTok{(alpha\_EAG}\SpecialCharTok{$}\NormalTok{n, alpha\_SWLS}\SpecialCharTok{$}\NormalTok{n, alpha\_EBR}\SpecialCharTok{$}\NormalTok{n, alpha\_EBD}\SpecialCharTok{$}\NormalTok{n, alpha\_MOS2}\SpecialCharTok{$}\NormalTok{n,}
+\NormalTok{        alpha\_PANAS\_P}\SpecialCharTok{$}\NormalTok{n, alpha\_PANAS\_N}\SpecialCharTok{$}\NormalTok{n, alpha\_PCPS3}\SpecialCharTok{$}\NormalTok{n),}
+  \AttributeTok{alpha =} \FunctionTok{c}\NormalTok{(alpha\_EAG}\SpecialCharTok{$}\NormalTok{alpha, alpha\_SWLS}\SpecialCharTok{$}\NormalTok{alpha, alpha\_EBR}\SpecialCharTok{$}\NormalTok{alpha, alpha\_EBD}\SpecialCharTok{$}\NormalTok{alpha, }
+\NormalTok{            alpha\_MOS2}\SpecialCharTok{$}\NormalTok{alpha, alpha\_PANAS\_P}\SpecialCharTok{$}\NormalTok{alpha, alpha\_PANAS\_N}\SpecialCharTok{$}\NormalTok{alpha, alpha\_PCPS3}\SpecialCharTok{$}\NormalTok{alpha),}
+  \AttributeTok{ci2.5 =} \FunctionTok{c}\NormalTok{(alpha\_EAG}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{1}\NormalTok{], alpha\_SWLS}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{1}\NormalTok{], alpha\_EBR}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{1}\NormalTok{], alpha\_EBD}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{1}\NormalTok{], }
+\NormalTok{            alpha\_MOS2}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{1}\NormalTok{], alpha\_PANAS\_P}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{1}\NormalTok{], alpha\_PANAS\_N}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{1}\NormalTok{], alpha\_PCPS3}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{1}\NormalTok{]),}
+  \AttributeTok{ci97.5 =} \FunctionTok{c}\NormalTok{(alpha\_EAG}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{2}\NormalTok{], alpha\_SWLS}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{2}\NormalTok{], alpha\_EBR}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{2}\NormalTok{], alpha\_EBD}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{2}\NormalTok{], }
+\NormalTok{             alpha\_MOS2}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{2}\NormalTok{], alpha\_PANAS\_P}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{2}\NormalTok{], alpha\_PANAS\_N}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{2}\NormalTok{], alpha\_PCPS3}\SpecialCharTok{$}\NormalTok{ci[}\DecValTok{2}\NormalTok{])) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{mutate}\NormalTok{(}\FunctionTok{across}\NormalTok{(}\FunctionTok{starts\_with}\NormalTok{(}\StringTok{"ci"}\NormalTok{), round, }\DecValTok{3}\NormalTok{)) }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{unite}\NormalTok{(}\AttributeTok{col =} \StringTok{"CI"}\NormalTok{, ci2}\FloatTok{.5}\SpecialCharTok{:}\NormalTok{ci97}\FloatTok{.5}\NormalTok{, }\AttributeTok{sep =} \StringTok{" — "}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{kable}\NormalTok{(}\AttributeTok{digits =} \DecValTok{3}\NormalTok{,}
+        \AttributeTok{booktabs =} \ConstantTok{TRUE}\NormalTok{,}
+        \AttributeTok{linesep =} \StringTok{""}\NormalTok{,}
+        \AttributeTok{align =} \FunctionTok{c}\NormalTok{(}\StringTok{"l"}\NormalTok{, }\FunctionTok{rep}\NormalTok{(}\StringTok{"c"}\NormalTok{, }\DecValTok{4}\NormalTok{)),}
+        \AttributeTok{caption =} \StringTok{"Internal consistency of measured scales"}\NormalTok{,}
+        \AttributeTok{col.names =} \FunctionTok{c}\NormalTok{(}\StringTok{"Variable"}\NormalTok{, }\StringTok{"Items"}\NormalTok{, }\StringTok{"$n$"}\NormalTok{, }\StringTok{"$}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{alpha$"}\NormalTok{, }\StringTok{"$95}\SpecialCharTok{\textbackslash{}\textbackslash{}}\StringTok{\% CI$"}\NormalTok{),}
+        \AttributeTok{escape =} \ConstantTok{FALSE}\NormalTok{) }\SpecialCharTok{|\textgreater{}} 
+  \FunctionTok{kable\_styling}\NormalTok{(}\AttributeTok{latex\_options =} \StringTok{"HOLD\_position"}\NormalTok{) }\SpecialCharTok{|\textgreater{}}
+  \FunctionTok{footnote}\NormalTok{(}
+    \AttributeTok{general =} \StringTok{"95}\SpecialCharTok{\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}}\StringTok{\% confidence intervals were calculated with 1,000 bootstrap samples.}
+\StringTok{           Standardized Cronbach\textquotesingle{}s alpha ($}\SpecialCharTok{\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}}\StringTok{alpha$) coefficients were computed.}
+\StringTok{           $\^{}1$}\SpecialCharTok{\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}}\StringTok{cite\{EAG\};}
+\StringTok{           $\^{}2$}\SpecialCharTok{\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}}\StringTok{cite\{EBR\};}
+\StringTok{           $\^{}3$}\SpecialCharTok{\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}}\StringTok{cite\{EBD\};}
+\StringTok{           $\^{}4$}\SpecialCharTok{\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}}\StringTok{cite\{MOS\};}
+\StringTok{           $\^{}5$}\SpecialCharTok{\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}}\StringTok{cite\{PANAS\};}
+\StringTok{           $\^{}6$}\SpecialCharTok{\textbackslash{}\textbackslash{}\textbackslash{}\textbackslash{}}\StringTok{cite\{PANAS\}"}\NormalTok{,}
+    \AttributeTok{threeparttable =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{footnote\_as\_chunk =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{escape =} \ConstantTok{FALSE}
+\NormalTok{  )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{table}[H]
+\centering
+\caption{\label{tab:tab-cronbach-alpha}Internal consistency of measured scales}
+\centering
+\begin{threeparttable}
+\begin{tabular}[t]{lcccc}
+\toprule
+Variable & Items & $n$ & $\alpha$ & $95\% CI$\\
+\midrule
+Self-Efficacy$^1$ & 10 & 223 & 0.905 & 0.875 — 0.926\\
+Life-Satisfaction$^2$ & 5 & 253 & 0.869 & 0.841 — 0.895\\
+Resilience$^3$ & 4 & 278 & 0.861 & 0.821 — 0.892\\
+Depression$^4$ & 7 & 223 & 0.767 & 0.71 — 0.813\\
+Social Support$^5$ & 19 & 195 & 0.977 & 0.971 — 0.982\\
+PANAS Positive$^6$ & 10 & 285 & 0.884 & 0.854 — 0.907\\
+PANAS Negative$^6$ & 10 & 282 & 0.827 & 0.793 — 0.867\\
+Community Cohesion$^x$ & 3 & 281 & 0.769 & 0.699 — 0.826\\
+\bottomrule
+\end{tabular}
+\begin{tablenotes}[para]
+\item \textit{Note: } 
+\item 95\% confidence intervals were calculated with 1,000 bootstrap samples.
+           Standardized Cronbach's alpha ($\alpha$) coefficients were computed.
+           $^1$\cite{EAG};
+           $^2$\cite{EBR};
+           $^3$\cite{EBD};
+           $^4$\cite{MOS};
+           $^5$\cite{PANAS};
+           $^6$\cite{PANAS}
+\end{tablenotes}
+\end{threeparttable}
+\end{table}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Session info (for reproducibility)}\label{session}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Display session information for reproducibility}
+\CommentTok{\# {-} Uses \textasciigrave{}pander()\textasciigrave{} for better formatting}
+\CommentTok{\# {-} \textasciigrave{}locale = FALSE\textasciigrave{} to exclude locale{-}specific info (reduces clutter)}
+\FunctionTok{library}\NormalTok{(pander)}
+\FunctionTok{pander}\NormalTok{(}\FunctionTok{sessionInfo}\NormalTok{(), }\AttributeTok{locale =} \ConstantTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\textbf{R version 4.4.3 (2025-02-28)}
+
+\textbf{Platform:} x86\_64-pc-linux-gnu
+
+\textbf{attached base packages:}
+\emph{stats}, \emph{graphics}, \emph{grDevices}, \emph{utils}, \emph{datasets}, \emph{methods} and \emph{base}
+
+\textbf{other attached packages:}
+\emph{pander(v.0.6.6)}, \emph{lubridate(v.1.9.4)}, \emph{forcats(v.1.0.0)}, \emph{stringr(v.1.5.1)}, \emph{dplyr(v.1.1.4)}, \emph{purrr(v.1.0.4)}, \emph{tidyr(v.1.3.1)}, \emph{tibble(v.3.2.1)}, \emph{ggplot2(v.3.5.1)}, \emph{tidyverse(v.2.0.0)}, \emph{kableExtra(v.1.4.0)}, \emph{scales(v.1.3.0)}, \emph{readr(v.2.1.5)}, \emph{performance(v.0.13.0)}, \emph{MuMIn(v.1.48.4)}, \emph{psych(v.2.4.12)}, \emph{ltm(v.1.2-0)}, \emph{polycor(v.0.8-1)}, \emph{msm(v.1.8.2)}, \emph{MASS(v.7.3-64)} and \emph{knitr(v.1.49)}
+
+\textbf{loaded via a namespace (and not attached):}
+\emph{gtable(v.0.3.6)}, \emph{xfun(v.0.51)}, \emph{insight(v.1.1.0)}, \emph{lattice(v.0.22-6)}, \emph{tzdb(v.0.4.0)}, \emph{vctrs(v.0.6.5)}, \emph{tools(v.4.4.3)}, \emph{generics(v.0.1.3)}, \emph{stats4(v.4.4.3)}, \emph{parallel(v.4.4.3)}, \emph{pkgconfig(v.2.0.3)}, \emph{Matrix(v.1.7-2)}, \emph{lifecycle(v.1.0.4)}, \emph{compiler(v.4.4.3)}, \emph{munsell(v.0.5.1)}, \emph{mnormt(v.2.1.1)}, \emph{htmltools(v.0.5.8.1)}, \emph{yaml(v.2.3.10)}, \emph{crayon(v.1.5.3)}, \emph{pillar(v.1.10.1)}, \emph{admisc(v.0.37)}, \emph{nlme(v.3.1-167)}, \emph{tidyselect(v.1.2.1)}, \emph{digest(v.0.6.37)}, \emph{mvtnorm(v.1.3-3)}, \emph{stringi(v.1.8.4)}, \emph{bookdown(v.0.42)}, \emph{splines(v.4.4.3)}, \emph{fastmap(v.1.2.0)}, \emph{grid(v.4.4.3)}, \emph{archive(v.1.1.11)}, \emph{colorspace(v.2.1-1)}, \emph{expm(v.1.0-0)}, \emph{cli(v.3.6.3)}, \emph{magrittr(v.2.0.3)}, \emph{survival(v.3.8-3)}, \emph{withr(v.3.0.2)}, \emph{bit64(v.4.6.0-1)}, \emph{timechange(v.0.3.0)}, \emph{rmarkdown(v.2.29)}, \emph{bit(v.4.5.0.1)}, \emph{hms(v.1.1.3)}, \emph{evaluate(v.1.0.3)}, \emph{viridisLite(v.0.4.2)}, \emph{rlang(v.1.1.5)}, \emph{Rcpp(v.1.0.14)}, \emph{glue(v.1.8.0)}, \emph{xml2(v.1.3.6)}, \emph{svglite(v.2.1.3)}, \emph{rstudioapi(v.0.17.1)}, \emph{vroom(v.1.6.5)}, \emph{R6(v.2.5.1)} and \emph{systemfonts(v.1.2.1)}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\section{Supplementary references}\label{refs}
+
+\begin{multicols}{2}
+\AtNextBibliography{\footnotesize}
+\printbibliography[heading=none]
+\normalsize
+\end{multicols}
+
+\def\printbibliography{}
+
+\printbibliography
+
+\end{document}

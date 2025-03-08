@@ -1,0 +1,306 @@
+---
+title: "\\colorbox{pink}{Colombian trans wellbeing}"
+subtitle: Code and analyses
+author:
+  - name: Maria Fernanda Reyes-Rodríguez \orcidlink{0000-0002-2645-5092}
+    correspondence: true
+    institute: andes
+    email: m.reyes8@uniandes.edu.co
+  - name: Juan David Leongómez \orcidlink{0000-0002-0092-6298}
+    correspondence: false
+    institute: codec
+institute:
+  - andes: "Department of Psychology, University of Los Andes, Bogota 111211, Colombia"
+  - codec: "CODEC: Ciencias Cognitivas y del Comportamiento, Universidad El Bosque, Bogotá 110121, Colombia."
+date: "`r Sys.setlocale('LC_TIME','en_GB.UTF-8');format(Sys.Date(),'%d %B, %Y')`"
+output:
+  bookdown::pdf_document2:
+    citation_package: biblatex
+    highlight: zenburn
+    number_sections: yes
+    keep_tex:  true
+    toc: no
+    pandoc_args:
+      - '--lua-filter=lua/scholarly-metadata.lua'
+      - '--lua-filter=lua/author-info-blocks.lua'
+classoption: 
+      - bookmarksnumbered
+editor_options:
+  chunk_output_type: console
+geometry: margin=2cm
+header-includes: 
+  \usepackage{caption} 
+  \usepackage{float} 
+  \floatplacement{figure}{H} 
+  \usepackage[utf8]{inputenc} 
+  \usepackage{fancyhdr}
+  \pagestyle{fancy} 
+  \usepackage{hanging}
+  \lhead{Reyes-Rodríguez \& Leongómez} 
+  \rhead{\textit{\colorbox{pink}{Colombian trans wellbeing}}} 
+  \renewcommand{\abstractname}{Description} 
+  \usepackage[british]{babel}
+  \usepackage{csquotes}
+  \usepackage[style=apa,backend=biber]{biblatex}
+  \DeclareLanguageMapping{british}{british-apa}
+  \usepackage{hanging}
+  \usepackage{amsthm,amssymb,amsfonts}
+  \usepackage{tikz,lipsum,lmodern}
+  \usepackage{multicol}
+  \usepackage{orcidlink}
+  \newcommand{\opensupplement}{\setcounter{table}{0}
+    \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0}
+    \renewcommand{\thefigure}{S\arabic{figure}}}
+  \newcommand{\closesupplement}{\setcounter{table}{0}
+    \renewcommand{\thetable}{\arabic{table}} \setcounter{figure}{0}
+    \renewcommand{\thefigure}{\arabic{figure}}}
+  \usepackage{multirow,booktabs,setspace}
+  \DeclareCaptionLabelSeparator{point}{. }
+  \DeclareCaptionLabelSeparator{point}{. }
+  \captionsetup[table]{labelfont=bf,
+    textfont=it,
+    format=plain,
+    labelsep=point,
+    skip=5pt}
+  \captionsetup[figure]{labelfont=bf,
+    format=plain,
+    justification=justified,
+    singlelinecheck=false,
+    labelsep=point,
+    skip=5pt}
+always_allow_html: yes
+bibliography: bib/Bibliography.bib
+urlcolor: blue
+linkcolor: gray
+citecolor: gray
+link-citations: true
+---
+
+------------------------------------------------------------------------
+
+```{=tex}
+\begin{center}
+\textbf{Description}
+\end{center}
+
+\par
+\begingroup
+\leftskip3em
+\rightskip\leftskip
+```
+
+This document contains all code, and step by step explanations for all analyses, figures and tables (including supplementary figures and tables) for:
+
+```{=latex}
+\begin{hangparas}{.25in}{1}
+Reyes-Rodríguez, M. F., \&  Leongómez, J. D. (in prep). \textit{\colorbox{pink}{Colombian trans wellbeing}}
+\end{hangparas}
+```
+
+Data are available on the Open Science Framework (OSF): \colorbox{pink}{https://doi.org/10.XXXX/OSF.IO/XXXXX}. The analyses were designed by Maria Fernanda Reyes-Rodríguez and Juan David Leongómez. This document and its underlying code were created in R Markdown by Juan David Leongómez using R and \LaTeX, ensuring full reproducibility.
+
+------------------------------------------------------------------------
+
+```{=latex}
+\par
+\endgroup
+
+{\hypersetup{hidelinks}
+\setcounter{tocdepth}{6}
+\tableofcontents
+}
+\opensupplement
+```
+
+```{r results = "hold", setup, include = FALSE}
+library(knitr)
+opts_chunk$set(fig.width = 12, fig.height = 6, fig.pos = "H")
+options(knitr.kable.NA = " ")
+opts_knit$set(eval.after = "fig.cap")
+```
+
+------------------------------------------------------------------------
+
+# Preliminaries
+
+## Load packages
+
+This file was created using `knitr` [@knitrcit], mostly using `tidyverse` [@tidyversecit] syntax. As such, data wrangling was mainly done using packages such as `dplyr` [@dplyrcit], and most figures were created or modified using `ggplot2` [@ggplotcit]. Tables were created using `knitr::kable` and `kableExtra` [@kableExtracit].
+
+Multi-model inference and model averaging was achieved using `MuMIn` [@MuMIncit], and model assumptions were performed using `performance` [@ludecke2021].
+
+All packages used in this file can be directly installed from the Comprehensive R Archive Network ([CRAN](https://cran.r-project.org/)). For a complete list of packages used to create this file, and their versions, see section \@ref(session), at the end of the document.
+
+```{r message = FALSE}
+library(ltm)
+library(psych)        # For statistical functions (e.g., Cronbach's alpha)
+library(MuMIn)        # For model selection and averaging
+library(performance)  # For model performance metrics
+library(readr)        # For reading data files
+library(scales)       # For percent formatting
+library(knitr)
+library(kableExtra)
+library(tidyverse)    # For data manipulation and piping
+```
+
+## Load data
+
+Load raw CSV data
+
+```{r message = FALSE}
+data_RAW <- read_csv("data/data.csv")
+```
+
+### Define PANAS Subscales (Positive & Negative Affect)
+
+XXXXXXX
+
+```{r message = FALSE}
+# List of PANAS Positive Affect (PANAS_P) items
+PANAS_P <- c("PANASB_1", "PANASB_3", "PANASB_5", "PANASB_9", 
+             "PANASB_10", "PANASB_12", "PANASB_14", "PANASB_16", 
+             "PANASB_17", "PANASB_19")
+
+# List of PANAS Negative Affect (PANAS_N) items
+PANAS_N <- c("PANASB_2", "PANASB_4", "PANASB_6", "PANASB_7",
+             "PANASB_8", "PANASB_11", "PANASB_13", "PANASB_15",
+             "PANASB_18", "PANASB_20")
+```
+
+## Internal consistency
+
+### Calculate Cronbach's Alpha for Different Scales
+
+To measure the internal consistency of these tests, we used standardized Cronbach's alpha ($\alpha$ or Tau-equivalent reliability: $\rho_{T}$) coefficients, using the function `cronbach.alpha` from the package `ltm` [@LtmPackageLatent2006].
+
+```{r cronbach-alpha, message = FALSE, warning = FALSE}
+# Compute Cronbach's alpha for the Self-Efficacy (EAG) scale
+alpha_EAG <- data_RAW |> 
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |>  # Replace 99 with NA (missing values)
+  select(starts_with("EAG_")) |>  # Select all columns starting with "EAG_"
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)  # Compute Cronbach’s alpha
+
+# Compute Cronbach's alpha for the Life-Satisfaction (SWLS) scale
+alpha_SWLS <- data_RAW |> 
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |>  # Replace 99 with NA
+  select(starts_with("SWLS_")) |>  # Select all columns starting with "SWLS_"
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for the Resilience (EBR) scale
+alpha_EBR <- data_RAW |> 
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |>  # Replace 99 with NA
+  select(starts_with("EBR_")) |>  # Select all columns starting with "EBR_"
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for the Depression (EBD) scale (after recoding responses)
+alpha_EBD <- data_RAW |> 
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |>  # Replace 99 with NA
+  select(starts_with("EBD_")) |>  # Select all columns starting with "EBD_"
+  mutate(across(everything(), ~ ifelse(is.na(.x), NA, .x - 1))) |>  # Adjust values
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for the Social Support (MOS2) scale
+alpha_MOS2 <- data_RAW |> 
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |>  # Replace 99 with NA
+  select(starts_with("MOS2_")) |>  # Select all columns starting with "MOS2_"
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for PANAS Positive Affect (PANAS_P)
+alpha_PANAS_P <- data_RAW |> 
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |>  # Replace 99 with NA
+  select(all_of(PANAS_P)) |>  # Select PANAS_P variables
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for PANAS Negative Affect (PANAS_N)
+alpha_PANAS_N <- data_RAW |> 
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |>  # Replace 99 with NA
+  select(all_of(PANAS_N)) |>  # Select PANAS_N variables
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for Community Cohesion (PCPS3) scale
+alpha_PCPS3 <- data_RAW |> 
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |>  # Replace 99 with NA
+  select(starts_with("PCPS3_")) |>  # Select all columns starting with "PCPS3_"
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+```
+
+### Table \@ref(tab:tab-cronbach-alpha). Internal consistency of measured scales
+
+The internal consistency of the measured scales was generally strong, with Cronbach’s $\alpha$ values ranging from `r round(min(alpha_EAG$alpha, alpha_SWLS$alpha, alpha_EBR$alpha, alpha_EBD$alpha, alpha_MOS2$alpha, alpha_PANAS_P$alpha, alpha_PANAS_N$alpha, alpha_PCPS3$alpha), 3)` to `r round(max(alpha_EAG$alpha, alpha_SWLS$alpha, alpha_EBR$alpha, alpha_EBD$alpha, alpha_MOS2$alpha, alpha_PANAS_P$alpha, alpha_PANAS_N$alpha, alpha_PCPS3$alpha), 3)`. In particular, the Social Support (MOS2) and Self-Efficacy (EAG) scales exhibited excellent internal consistency, while the Depression (EBD) and Community Cohesion (PCPS3) scales had acceptable reliability, suggesting a slightly lower but still adequate level of internal consistency.
+
+```{r tab-cronbach-alpha, message = FALSE, warning = FALSE}
+tibble(
+  Scale = c("Self-Efficacy$^1$",
+            "Life-Satisfaction$^2$",
+            "Resilience$^3$",
+            "Depression$^4$",
+            "Social Support$^5$",
+            "PANAS Positive$^6$",
+            "PANAS Negative$^6$",
+            "Community Cohesion$^x$"),
+  p = c(alpha_EAG$p, alpha_SWLS$p, alpha_EBR$p, alpha_EBD$p, alpha_MOS2$p,
+        alpha_PANAS_P$p, alpha_PANAS_N$p, alpha_PCPS3$p),
+  n = c(alpha_EAG$n, alpha_SWLS$n, alpha_EBR$n, alpha_EBD$n, alpha_MOS2$n,
+        alpha_PANAS_P$n, alpha_PANAS_N$n, alpha_PCPS3$n),
+  alpha = c(alpha_EAG$alpha, alpha_SWLS$alpha, alpha_EBR$alpha, alpha_EBD$alpha, 
+            alpha_MOS2$alpha, alpha_PANAS_P$alpha, alpha_PANAS_N$alpha, alpha_PCPS3$alpha),
+  ci2.5 = c(alpha_EAG$ci[1], alpha_SWLS$ci[1], alpha_EBR$ci[1], alpha_EBD$ci[1], 
+            alpha_MOS2$ci[1], alpha_PANAS_P$ci[1], alpha_PANAS_N$ci[1], alpha_PCPS3$ci[1]),
+  ci97.5 = c(alpha_EAG$ci[2], alpha_SWLS$ci[2], alpha_EBR$ci[2], alpha_EBD$ci[2], 
+             alpha_MOS2$ci[2], alpha_PANAS_P$ci[2], alpha_PANAS_N$ci[2], alpha_PCPS3$ci[2])) |>
+  mutate(across(starts_with("ci"), round, 3)) |> 
+  unite(col = "CI", ci2.5:ci97.5, sep = " — ") |> 
+  kable(digits = 3,
+        booktabs = TRUE,
+        linesep = "",
+        align = c("l", rep("c", 4)),
+        caption = "Internal consistency of measured scales",
+        col.names = c("Variable", "Items", "$n$", "$\\alpha$", "$95\\% CI$"),
+        escape = FALSE) |> 
+  kable_styling(latex_options = "HOLD_position") |>
+  footnote(
+    general = "95\\\\% confidence intervals were calculated with 1,000 bootstrap samples.
+           Standardized Cronbach's alpha ($\\\\alpha$) coefficients were computed.
+           $^1$\\\\cite{EAG};
+           $^2$\\\\cite{EBR};
+           $^3$\\\\cite{EBD};
+           $^4$\\\\cite{MOS};
+           $^5$\\\\cite{PANAS};
+           $^6$\\\\cite{PANAS}",
+    threeparttable = TRUE, footnote_as_chunk = TRUE, escape = FALSE
+  )
+```
+
+
+
+-----------------------------------------------------------------------
+
+# Session info (for reproducibility) {#session}
+
+```{r results = "hold"}
+# Display session information for reproducibility
+# - Uses `pander()` for better formatting
+# - `locale = FALSE` to exclude locale-specific info (reduces clutter)
+library(pander)
+pander(sessionInfo(), locale = FALSE)
+```
+
+------------------------------------------------------------------------
+
+# Supplementary references {#refs}
+
+\begin{multicols}{2}
+\AtNextBibliography{\footnotesize}
+\printbibliography[heading=none]
+\normalsize
+\end{multicols}
+
+\def\printbibliography{}
