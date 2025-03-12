@@ -140,7 +140,168 @@ library(readr)        # For reading data files
 library(scales)       # For percent formatting
 library(knitr)
 library(kableExtra)
+library(car)
 library(tidyverse)    # For data manipulation and piping
+```
+
+## Custom functions
+
+### `pval.lev` and `pval.stars`
+
+These functions take p-values and formats them, either in \LaTeX and highlighting significant p-values in bold and representing all in an appropriate level, or as stars.
+
+```{r}
+# Function to format p-values for LaTeX output, highlighting significant values in bold
+pval.lev <- function(pvals) {
+  ifelse(pvals < 0.0001, "\\textbf{< 0.0001}", # Highlight very small p-values
+         ifelse(pvals < 0.001, "\\textbf{< 0.001}", # Bold p-values < 0.001
+                ifelse(pvals < 0.05, paste0("\\textbf{", round(pvals, 4), "}"), # Bold p-values < 0.05
+                       round(pvals, 2) # Round non-significant values to two decimal places
+                )
+         )
+  )
+}
+
+# Function to add significance stars based on p-value thresholds
+pval.stars <- function(pvals) {
+  ifelse(pvals < 0.0001, "****", # Four stars for p < 0.0001
+         ifelse(pvals < 0.001, "***", # Three stars for p < 0.001
+                ifelse(pvals < 0.01, "**", # Two stars for p < 0.01
+                       ifelse(pvals < 0.05, "*", NA) # One star for p < 0.05, NA otherwise
+                )
+         )
+  )
+}
+```
+
+### `avg.model.anova`
+
+XXXX
+
+```{r}
+avg.model.anova <- function(avg_model, data, response) {
+  # Extract predictor names (remove intercept)
+  selected_vars <- names(coef(avg_model))[-1]
+  
+  # Ensure selected_vars exist in the dataset
+  selected_vars <- selected_vars[selected_vars %in% names(data)]
+  
+  if (length(selected_vars) == 0) {
+    stop("No valid predictors found in model-averaged object.")
+  }
+  
+  # Refit model using selected (averaged) predictors
+  weighted_model <- lm(reformulate(selected_vars, response = response), data = data)
+  
+  # Compute Type III ANOVA
+  anova_table <- weighted_model |>  
+    Anova(type = "III") |>  
+    broom::tidy() |> 
+    mutate_at("term", str_replace_all, "_", " ") |> 
+    mutate(df = paste(df, weighted_model$df.residual, sep = ", "),
+           p.value = pval.lev(p.value)) |>
+    filter(term != "Residuals") |> # Remove Residuals row
+    kable(digits = 3,
+          booktabs = TRUE,
+          linesep = "",
+          align = c("l", rep("c", 4)),
+          caption = "XXXXXX",
+          col.names = c("Term", "$SS_{term}$", "$df$", "$F$", "$p$"),
+          escape = FALSE) |> 
+    kable_styling(latex_options = "HOLD_position") |>
+    footnote(
+      general = "This ANOVA table was generated based on model-averaged estimates from 
+      multimodel inference. The predictor terms included in the model were selected based on 
+      their relative importance across candidate models ($\\\\Delta AICc$ < 2). 
+      Sum of squares ($SS_{term}$) values correspond to Type III ANOVA calculations, 
+      which test each term's contribution while controlling for all other predictors. 
+      Degrees of freedom ($df$) are presented as term $df$ and residual $df$, where residual 
+      $df$ reflects the remaining degrees of freedom in the model. The $F$ and $p$ values were
+      computed from the refitted model using only the selected predictors.
+      Significant effects are in bold.",
+      threeparttable = TRUE, 
+      footnote_as_chunk = TRUE, 
+      escape = FALSE
+    )
+  return(anova_table)
+}
+```
+
+### `avg.mod.plot`
+
+XXXX 
+
+```{r}
+avg.mod.plot <- function(avg_mod) {
+  # Extract model summary and transform into a tidy format
+  x <- summary(avg_mod)$coefmat.full |> 
+  as_tibble(rownames = "key") |>  # Convert row names to a "key" column
+  bind_cols(
+    confint(avg_mod, full = TRUE) |> as_tibble(),  # Add confidence intervals
+    summary(avg_mod)$coef.nmod |> 
+      as_tibble() |> 
+      pivot_longer(cols = everything(), names_to = "model", values_to = "value")  # Gather number of models per term
+  ) |> 
+  mutate(
+    avmod = deparse(substitute(avg_mod)) |> 
+      factor(),  # Store model name as a factor
+    value = value / max(value, na.rm = TRUE),  # Normalize 'value' column
+    sig = pval.stars(`Pr(>|z|)`) |> 
+      str_replace("\\.", "†"),  # Convert p-values into significance stars
+    key = key |> 
+      str_replace_all("Gender", "Gender: ") |> 
+      str_replace_all("Housing", "Housing: ") |> 
+      str_replace_all("_", " ")) 
+  
+  x <- x |> 
+    mutate(key = factor(key, levels = as.character(unique(x$key))))
+  
+  # Get the number of averaged models
+  nMods <- dim(avg_mod$msTable)[1]
+  
+  # Create the plot
+  ggplot(x, aes(x = key, y = Estimate)) +
+    # Add horizontal reference line at zero
+    geom_hline(yintercept = 0, color = "grey") +
+    # Add points sized and colored by importance
+    geom_point(aes(size = value, color = value), alpha = 0.5) +
+    # Add error bars (confidence intervals)
+    geom_errorbar(aes(ymin = `2.5 %`, ymax = `97.5 %`),
+                  colour = "black", width = 0.1) +
+    # Add additional points for emphasis
+    geom_point(size = 1) +
+    # Apply theme and labels
+    theme_bw() +
+    labs(x = NULL, y = "Estimate") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    # Scale for importance (value) size
+    scale_size_continuous(range = c(2, 8),
+                          breaks = seq(0, 1, by = 0.2)) +
+    # Legends for size and color
+    guides(size = guide_legend(title = "Importance"),
+           color = guide_legend(title = "Importance")) +
+    # Ensure x-axis labels remain in the correct order
+    scale_x_discrete(labels = levels(x$key),
+                     expand = c(0, 0.5)) +
+    # Use plasma color scale, reversed so darker colors represent higher values
+    scale_colour_viridis_c(option = "plasma", direction = -1) +
+    # Add significance labels next to points
+    geom_text(aes(label = sig), y = x$`97.5 %`, vjust = -0.4) +
+    # Add annotation indicating the number of averaged models
+    geom_text(aes(x = Inf, y = -Inf,
+                  label = paste("Models averaged = ", nMods)),
+              #fontface = "italic",
+              size = 3,
+              hjust = 1.1,
+              vjust = -0.5,
+              inherit.aes = FALSE)
+}
+```
+
+## Set sum-to-zero contrasts for factors (needed for Type III ANOVA)
+
+```{r}
+options(contrasts = c("contr.sum", "contr.poly"))
 ```
 
 ## Load data
@@ -153,7 +314,7 @@ data_RAW <- read_csv("data/data.csv")
 
 ### Define PANAS Subscales (Positive & Negative Affect)
 
-XXXXXXX
+XXXXXXX 
 
 ```{r message = FALSE}
 # List of PANAS Positive Affect (PANAS_P) items
@@ -277,6 +438,466 @@ tibble(
            $^6$\\\\cite{PANAS}.",
     threeparttable = TRUE, footnote_as_chunk = TRUE, escape = FALSE
   )
+```
+
+# Data Preprocessing
+
+## Renaming, recoding, and filtering
+
+XXXX
+
+```{r message = FALSE}
+data <- data_RAW |>
+  # Rename columns to meaningful names
+  rename(
+    Age = SD1,
+    City = SD2,
+    Gender = SD3,
+    Sexualientation = SD4,
+    Sex = SD5,
+    Ethnicity = SD6,
+    Farmer = SD7,
+    Marital_Status = SD8,
+    SES = SD9, # Socioeconomic Status
+    Education = SD10,
+    Children = SD11,
+    Housing = SD12,
+    Cohabitant = SD13,
+    Monthly_Income = SD14,
+    Income_Source = SD15,
+    Employment = SD16,
+    Job = SD17,
+    # Disabilities and difficulties
+    Hearing_Difficulties = SD18_1,
+    Speaking_Difficulties = SD18_2,
+    Seeing_Difficulties = SD18_3,
+    Moving_Difficulties = SD18_4,
+    Grabing_Difficulties = SD18_5,
+    Understanding_Difficulties = SD18_6,
+    Interacting_Difficulties = SD18_7,
+    # Lifetime Prevalence (LP) of substance use
+    LP_Alcohol = SD19_1_A,
+    LP_Cigarette = SD19_2_A,
+    LP_Cannabis = SD19_3_A,
+    LP_Cocaine = SD19_4_A,
+    LP_Basuco = SD19_5_A,
+    LP_Inhalant = SD19_6_A,
+    LP_Ecstasy = SD19_7_A,
+    LP_Psilocybin = SD19_8_A,
+    LP_LSD = SD19_9_A,
+    LP_Tranquilizer = SD19_10_A,
+    LP_Popper = SD19_11_A,
+    LP_Anfetamines = SD19_12_A,
+    LP_Heroine = SD19_13_A,
+    # Last Month (LM) substance use
+    LM_Alcohol = SD19_1_B,
+    LM_Cigarette = SD19_2_B,
+    LM_Cannabis = SD19_3_B,
+    LM_Cocaine = SD19_4_B,
+    LM_Basuco = SD19_5_B,
+    LM_Inhalant = SD19_6_B,
+    LM_Ecstasy = SD19_7_B,
+    LM_Psilocybin = SD19_8_B,
+    LM_LSD = SD19_9_B,
+    LM_TRAN = SD19_10_B,
+    LM_Popper = SD19_11_B,
+    LM_Anfetamines = SD19_12_B,
+    LM_Heroine = SD19_13_B,
+    # Last Week (LW) substance use
+    LW_Alcohol = SD19_1_C,
+    LW_Cigarette = SD19_2_C,
+    LW_Cannabis = SD19_3_C,
+    LW_Cocaine = SD19_4_C,
+    LW_Basuco = SD19_5_C,
+    LW_Inhalant = SD19_6_C,
+    LW_Ecstasy = SD19_7_C,
+    LW_Psilocybin = SD19_8_C,
+    LW_LSD = SD19_9_C,
+    LW_Tranquilizer = SD19_10_C,
+    LW_Popper = SD19_11_C,
+    LW_Anfetamines = SD19_12_C,
+    LW_Heroine = SD19_13_C,
+    Health = SD20_1,
+    # Health and other variables
+    Illness = SD21,
+    Disease_Other = SD22_13_TEXT,
+    PCPS1_4_Other = PCPS1_4_texto,
+    eed1_7_Other = EED1_7_TEXT
+  ) |>
+  # Replace character "99" with NA for missing values
+  mutate(across(where(is.character), ~ na_if(., "99"))) |>
+  # Replace numeric 99 with NA for missing values
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |>
+  # Recode gender categories into descriptive labels
+  mutate(
+    Gender = recode(
+      Gender,
+      "1" = "Male",
+      "2" = "Female",
+      "3" = "Androgynous",
+      "4" = "Trans woman",
+      "5" = "Trans man",
+      "6" = "Trans feminine",
+      "7" = "Trans masculine",
+      "8" = "Queer",
+      "9" = "Non-binary",
+      "10" = "Don't know",
+      "11" = "Other"
+    )) |>
+  # Create a broader Gender category for analysis
+  mutate(Gender = if_else(Gender %in% c(
+    "Woman", "Trans feminine", "Transexual", "Travesti", "Trans woman"),
+    "Trans woman",  
+    if_else(Gender %in% c("Man", "Trans masculine", "Trans man"),
+            "Trans man",
+            "Non-binary")
+  )) |>
+  # Recode housing categories into descriptive labels
+  mutate(
+    Housing = recode(
+      Housing,
+      "1" = "Home-owner",
+      "2" = "Renting (entire home)",
+      "3" = "Living with family",
+      "4" = "Shared rental (room)",
+      "5" = "Without permanent housing"
+    )
+  ) |>
+  # Recode substance use responses from text to binary (1 = Yes, 0 = No)
+  mutate_at(
+    c(
+      "LP_Alcohol",
+      "LP_Cigarette",
+      "LP_Cannabis",
+      "LP_Cocaine",
+      "LP_Basuco",
+      "LP_Inhalant",
+      "LP_Ecstasy",
+      "LP_Psilocybin",
+      "LP_LSD",
+      "LP_Tranquilizer",
+      "LP_Popper",
+      "LP_Anfetamines",
+      "LP_Heroine",
+      "LM_Alcohol",
+      "LM_Cigarette",
+      "LM_Cannabis",
+      "LM_Cocaine",
+      "LM_Basuco",
+      "LM_Inhalant",
+      "LM_Ecstasy",
+      "LM_Psilocybin",
+      "LM_LSD",
+      "LM_TRAN",
+      "LM_Popper",
+      "LM_Anfetamines",
+      "LM_Heroine",
+      "LW_Alcohol",
+      "LW_Cigarette",
+      "LW_Cannabis",
+      "LW_Cocaine",
+      "LW_Basuco",
+      "LW_Inhalant",
+      "LW_Ecstasy",
+      "LW_Psilocybin",
+      "LW_LSD",
+      "LW_Tranquilizer",
+      "LW_Popper",
+      "LW_Anfetamines",
+      "LW_Heroine"
+    ),
+    ~ recode(.x, "1" = 1, "2" = 0)
+  ) |>
+  # Select only relevant variables
+  select(
+    -c(
+      Codigo,
+      ends_with("_TEXT"),
+      Sexualientation,
+      ends_with("_texto")
+    )
+  ) |>
+  # Recode ethnicity, farmer status, marital status, SES, and education
+  mutate(
+    Ethnicity = recode(
+      Ethnicity,
+      "1" = "Indigenous",
+      "2" = "Rrom",
+      "3" = "Afro-Colombian",
+      "4" = "Afro-Colombian",
+      "5" = "Afro-Colombian",
+      "6" = "Afro-Colombian",
+      "7" = "Afro-Colombian",
+      "8" = "Afro-Colombian",
+      "9" = "None"
+    )
+  ) |>
+  mutate(Farmer = recode(
+    Farmer,
+    "1" = "Yes",
+    "2" = "No",
+    "5" = NA_character_
+  )) |>
+  mutate(
+    Marital_Status = recode(
+      Marital_Status,
+      "1" = "Married",
+      "2" = "Single",
+      "3" = "Widow/er",
+      "4" = "Divorced",
+      "5" = "Civil union",
+      "6" = "Stable relationship"
+    )
+  ) |>
+  mutate(
+    SES = recode_factor(
+      SES,
+      "1" = "Low",
+      "2" = "Low",
+      "7" = "Low",
+      "3" = "Middle-low",
+      "4" = "Middle-high",
+      "5" = "High",
+      "6" = "High"
+    )
+  ) |>
+  mutate(
+    Education = recode_factor(
+      Education,
+      "1" = "No studies, illiterate",
+      "2" = "No studies, literate",
+      "3" = "Primary school (unfinished)",
+      "4" = "Primary school",
+      "5" = "Secondary school (unfinished)",
+      "6" = "Secondary school",
+      "7" = "Technical degree",
+      "8" = "University (unfinished)",
+      "9" = "University",
+      "10" = "Postgraduate studies"
+    )
+  ) |>
+  mutate(across(c(SD22_1:SD22_13, 
+                  EED1_1,
+                  EED1_2,
+                  EED1_3,
+                  EED1_4,
+                  EED1_5,
+                  EED1_6,
+                  EED1_7,
+                  EED2_1:EED2_5),
+                ~ as.numeric(
+                  recode(
+                    as.character(.x),
+                    "1" = "1",
+                    "2" = "0",
+                    .default = NA_character_,
+                    .missing = NA_character_
+                  )
+                ))) |>
+  # Convert disability variables to binary (1 = Has difficulty, 0 = No difficulty)
+  mutate(across(
+    ends_with("_Difficulties"),
+    ~ case_when(.x == 99 ~ NA_real_, is.na(.x) ~ NA_real_, .x == 4 ~ 1, TRUE ~ 0)
+  )) |>
+  # Create a new variable 'difficulty_dichotomous' to indicate whether a person has
+  # any difficulties across different categories
+  mutate(Difficulty_Dichotomous = if_else(
+    # If any of the difficulties variables (e.g., Hearing_Difficulties, Speaking_Difficulties, etc.) are NA
+    rowSums(across(ends_with("_Difficulties"), ~ is.na(.))) > 0,
+    NA_real_, # Assign NA if any difficulty is missing
+    # Otherwise, check if all seven difficulties are marked as '1' (indicating impairment)
+    if_else(rowSums(across(ends_with("_Difficulties"), ~ . == 1)) == 7,
+            1, # Assign 1 if the person has all seven difficulties
+            0 # Assign 0 otherwise
+    )
+  )) |>
+  # Recode PCPS1_1 to PCPS1_5: Convert 1 to 1 (yes) and 2 to 0 (no), with NA for other values
+  mutate(across(PCPS1_1:PCPS1_5, ~ case_when(
+    . == 1 ~ 1, # Yes
+    . == 2 ~ 0, # No
+    TRUE ~ NA_real_ # Missing or other values
+  ))) |>
+  # Recode PCPS2_1 to PCPS2_5: Convert 1 to 0 (no engagement), and 2-5 to 1 (some engagement)
+  mutate(across(PCPS2_1:PCPS2_5, ~ case_when(
+    . == 1 ~ 0, # No engagement
+    . %in% 2:5 ~ 1, # Some engagement
+    TRUE ~ NA_real_ # Missing or other values
+  ))) |>
+  
+  mutate(across(starts_with("EBD_"), ~ ifelse(is.na(.x), NA, .x - 1))) |> 
+  # Compute aggregate variables summarizing different aspects
+  mutate(
+    # Count the number of substances used in the last month
+    Polyconsumption_Month = rowSums(across(LM_Alcohol:LM_Heroine, ~.), na.rm = TRUE),
+    # Count the number of reported diseases or health conditions
+    Disease_Burden = rowSums(across(SD22_1:SD22_13, ~.), na.rm = TRUE),
+    # Count the number of group memberships (sum of binary indicators)
+    Group_Membership = rowSums(across(PCPS1_1:PCPS1_5, ~.), na.rm = TRUE),
+    # Count the number of community engagement activities
+    Community_Engagement = rowSums(across(PCPS2_1:PCPS2_5, ~.), na.rm = TRUE),
+    # The following line is commented out: it would sum discrimination experiences
+    Discrimination = rowSums(across(EED1_1:EED1_7, ~.), na.rm = TRUE),
+    Discrimination = ifelse(Discrimination >= 1, 1, 0),
+    
+    Self_Efficacy = if_else(rowSums(!is.na(across(starts_with("EAG_")))) >= 5,
+                            rowMeans(across(starts_with("EAG_")), na.rm = TRUE),
+                            NA_real_),
+    
+    Life_Satisfaction = if_else(rowSums(!is.na(across(starts_with("SWLS_")))) >= 3,
+                                rowMeans(across(starts_with("SWLS_")), na.rm = TRUE),
+                                NA_real_),
+    
+    Resilience = if_else(rowSums(!is.na(across(starts_with("EBR_")))) >= 3,
+                         rowMeans(across(starts_with("EBR_")), na.rm = TRUE),
+                         NA_real_),
+    
+    Depression = if_else(rowSums(!is.na(across(starts_with("EBD_")))) >= 6,
+                         rowMeans(across(starts_with("EBD_")), na.rm = TRUE),
+                         NA_real_),
+    
+    Social_Support = if_else(rowSums(!is.na(across(starts_with("MOS2_")))) >= 10,
+                             rowMeans(across(starts_with("MOS2_")), na.rm = TRUE),
+                             NA_real_),
+    
+    Positive_Affect = if_else(rowSums(!is.na(across(all_of(PANAS_P)))) >= 8,
+                              rowMeans(across(all_of(PANAS_P)), na.rm = TRUE),
+                              NA_real_),
+    
+    Negative_Affect = if_else(rowSums(!is.na(across(all_of(PANAS_N)))) >= 9,
+                              rowMeans(across(all_of(PANAS_N)), na.rm = TRUE),
+                              NA_real_),                          
+    
+    Community_Cohesion = if_else(rowSums(!is.na(across(starts_with("PCPS3_")))) >= 2,
+                                 rowMeans(across(starts_with("PCPS3_")), na.rm = TRUE),
+                                 NA_real_),
+    
+  ) |>
+  select(Age, Gender, Ethnicity, Marital_Status, SES, Education, Housing, 
+         Health, Polyconsumption_Month:Community_Cohesion) |>
+  # Convert categorical variables Housing to Job into factors
+  mutate(Housing = as.factor(Housing)) |>
+  # Convert all remaining character variables to factors
+  mutate_if(is.character, as.factor) |> 
+  
+  filter(Age >= 18)
+```
+
+## Missing Data
+
+Create a summary of missing data for each variable in the final dataset
+
+```{r message = FALSE}
+Missing_data <- data |>
+  # Summarize across all columns, counting the number of NA values in each column
+  summarise(across(everything(), ~ sum(is.na(.)))) |>
+  # Convert the summary from wide format (one row, many columns) to long format
+  pivot_longer(
+    everything(),               # Select all columns
+    names_to = "Variable",      # Store column names in a new variable "Variable"
+    values_to = "NA_count"      # Store the count of NAs in a new variable "NA_count"
+  ) |> 
+  # Compute the proportion of missing values for each variable
+  mutate(Proportion = NA_count / dim(data)[1])  # Divide NA count by total number of rows in 'data'
+```
+
+### Fig. \@ref(fig:fig-missing-data). Proportion of missing data
+
+To apply multi-model inference techniques such as dredge and model averaging, models must be fitted with complete data. Therefore, assessing the proportion of missing data per variable was crucial. While excessive missingness could lead to unreliable models, imputing missing values might reduce data credibility. Since no variable had an unacceptably high proportion of missing data, we opted not to impute missing values.
+
+```{r fig-missing-data, fig.height = 4, fig.width = 6, fig.cap = "Proportion of missing data per variable. Variables are ordered from highest to lowest proportion of missing values. The color gradient indicates the proportion of missingness, with darker shades representing higher percentages."}
+Missing_data |> 
+  mutate_at("Variable", str_replace_all, "_", " ") |> 
+  ggplot(aes(
+    x = fct_reorder(Variable, Proportion, .desc = TRUE), # Reorder variables from highest to lowest missingness
+    y = Proportion,
+    fill = Proportion  # Use fill color to indicate proportion of missing data
+  )) +
+  geom_col() +  # Create bar plot
+  # Add percentage labels on top of bars
+  geom_text(aes(label = percent(Proportion, accuracy = 1)),  
+            vjust = -0.5, size = 2) +
+  # Apply color gradient: Green (low missing data) → Yellow (moderate) → Red (high missing data)
+  scale_fill_viridis_c(
+    option = "plasma",  # Define color range
+    direction = -1,  # Reverse the color scale
+    labels = percent_format(accuracy = 1)  # Convert legend values to percentage format
+  ) + 
+  # Convert Y-axis (proportion of missing data) to a percentage scale
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  # Add axis labels
+  labs(
+    y = "Percentage of Missing Data",  # Label for Y-axis
+    x = "Variable"  # Label for X-axis
+  ) +
+  # Use a minimal theme for a cleaner visual appearance
+  theme_minimal() +
+  # Rotate X-axis labels for better readability
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+# Multi-model inference
+
+XXXX
+
+## Life Satisfaction model
+
+XXXX
+
+```{r}
+dat_LS <- data |> 
+  select(Life_Satisfaction, Age, Gender, Ethnicity, Marital_Status, Education, Housing, 
+         Self_Efficacy, Community_Cohesion, Depression, Social_Support, Polyconsumption_Month,
+         Disease_Burden, Discrimination, Group_Membership, Community_Engagement)|> 
+  drop_na()
+
+global_LS <- lm(Life_Satisfaction ~ Age + Gender + Ethnicity + Marital_Status + Education +
+                  Housing + Self_Efficacy + Community_Cohesion + Depression + 
+                  Social_Support + Polyconsumption_Month + Disease_Burden + Discrimination +
+                  Group_Membership + Community_Engagement,
+                data = dat_LS,
+                na.action = "na.fail")
+```
+
+### Dredge
+
+XXXX
+
+```{r message = FALSE, warning = FALSE}
+dr_LS<- dredge(global_LS, 
+               trace = 2 #para ver barra de progreso
+)
+```
+
+#### Fig. \@ref(fig:fig-dredge-LS). Dredge results of the Life Satisfaction model
+
+XXXX
+
+```{r fig-dredge-LS, fig.height = 8, fig.cap = "XXXX."}
+plot(dr_LS[1:100,])
+```
+
+### Average model
+
+XXXX
+
+```{r}
+avg_LS <- model.avg(dr_LS, subset = delta < 2, fit = TRUE)
+```
+
+#### Table \@ref(tab:tab-avg-LS). XXXX
+
+XXXX
+
+```{r tab-avg-LS, message = FALSE, warning = FALSE}
+avg.model.anova(avg_LS, data = dat_LS, response = "Life_Satisfaction")
+```
+
+#### Fig. \@ref(fig:fig-avg-LS). Dredge results of the Life Satisfaction model
+
+XXXX
+
+```{r fig-avg-LS, warning = FALSE, fig.height = 4, fig.width = 6, fig.cap = "XXXX."}
+avg.mod.plot(avg_LS)
 ```
 
 
