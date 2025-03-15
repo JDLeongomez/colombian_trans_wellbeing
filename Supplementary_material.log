@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2025.3.8)  11 MAR 2025 19:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025) (preloaded format=pdflatex 2025.3.12)  15 MAR 2025 17:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -337,10 +337,10 @@ Package: hanging 2009/09/02 v1.2b hanging paragraphs and punctuation
 \h@ngcolonwd=\skip84
 \h@ngscolonwd=\skip85
 ) (/home/jdl/.TinyTeX/texmf-dist/tex/generic/babel/babel.sty
-Package: babel 2025/02/14 v25.4 The multilingual framework for pdfLaTeX, LuaLaTeX and XeLaTeX
+Package: babel 2025/03/10 v25.5 The multilingual framework for pdfLaTeX, LuaLaTeX and XeLaTeX
 \babel@savecnt=\count304
 \U@D=\dimen192
-\l@unhyphenated=\language8
+\l@unhyphenated=\language6
 (/home/jdl/.TinyTeX/texmf-dist/tex/generic/babel/txtbabel.def)
 \bbl@readstream=\read3
 \bbl@dirlevel=\count305
@@ -351,9 +351,9 @@ Language: english 2017/06/06 v3.3r English support from the babel system
 Package babel Info: Hyphen rules for 'canadian' set to \l@english
 (babel)             (\language0). Reported on input line 102.
 Package babel Info: Hyphen rules for 'australian' set to \l@ukenglish
-(babel)             (\language5). Reported on input line 105.
+(babel)             (\language3). Reported on input line 105.
 Package babel Info: Hyphen rules for 'newzealand' set to \l@ukenglish
-(babel)             (\language5). Reported on input line 108.
+(babel)             (\language3). Reported on input line 108.
 ))) (/home/jdl/.TinyTeX/texmf-dist/tex/generic/babel/locale/en/babel-british.tex
 Package babel Info: Importing font and identification data for british
 (babel)             from babel-en-GB.ini. Reported on input line 11.
@@ -447,7 +447,7 @@ Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 \bibhang=\skip93
 \blx@bcfin=\read4
 \blx@bcfout=\write4
-\blx@langwohyphens=\language9
+\blx@langwohyphens=\language7
 \c@mincomprange=\count356
 \c@maxcomprange=\count357
 \c@mincompwidth=\count358
@@ -1093,6 +1093,8 @@ Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
 \rotheadsize=\dimen333
 \c@nlinenum=\count508
 \TeXr@lab=\toks55
+) (/home/jdl/.TinyTeX/texmf-dist/tex/latex/anyfontsize/anyfontsize.sty
+Package: anyfontsize 2007/11/22 anyfontsize.sty by pts
 ) (/home/jdl/.TinyTeX/texmf-dist/tex/latex/bookmark/bookmark.sty
 Package: bookmark 2023-12-10 v1.31 PDF bookmarks (HO)
 (/home/jdl/.TinyTeX/texmf-dist/tex/latex/bookmark/bkm-pdftex.def
@@ -1102,35 +1104,35 @@ File: bkm-pdftex.def 2023-12-10 v1.31 bookmark driver for pdfTeX and luaTeX (HO)
 Package: xurl 2022/01/09 v 0.10 modify URL breaks
 xurl: Set penalties for biblatex
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 138.
+Package hyperref Info: Option `colorlinks' set `true' on input line 140.
 Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'british'.
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 151.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 153.
 (/home/jdl/.TinyTeX/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (./Supplementary_material.aux)
 \openout1 = `Supplementary_material.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 151.
-LaTeX Font Info:    ... okay on input line 151.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 151.
-LaTeX Font Info:    ... okay on input line 151.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 151.
-LaTeX Font Info:    ... okay on input line 151.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 151.
-LaTeX Font Info:    ... okay on input line 151.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 151.
-LaTeX Font Info:    ... okay on input line 151.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 151.
-LaTeX Font Info:    ... okay on input line 151.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 151.
-LaTeX Font Info:    ... okay on input line 151.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 151.
-LaTeX Font Info:    ... okay on input line 151.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 151.
-LaTeX Font Info:    ... okay on input line 151.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 153.
+LaTeX Font Info:    ... okay on input line 153.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 153.
+LaTeX Font Info:    ... okay on input line 153.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 153.
+LaTeX Font Info:    ... okay on input line 153.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 153.
+LaTeX Font Info:    ... okay on input line 153.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 153.
+LaTeX Font Info:    ... okay on input line 153.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 153.
+LaTeX Font Info:    ... okay on input line 153.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 153.
+LaTeX Font Info:    ... okay on input line 153.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 153.
+LaTeX Font Info:    ... okay on input line 153.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 153.
+LaTeX Font Info:    ... okay on input line 153.
 (/home/jdl/.TinyTeX/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
@@ -1215,47 +1217,47 @@ Package biblatex Info: Automatic encoding selection.
 Package biblatex Info: Trying to load bibliographic data...
 Package biblatex Info: ... file 'Supplementary_material.bbl' found.
 (./Supplementary_material.bbl)
-Package biblatex Info: Reference section=0 on input line 151.
-Package biblatex Info: Reference segment=0 on input line 151.
-Package hyperref Info: Link coloring ON on input line 151.
-LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 153.
+Package biblatex Info: Reference section=0 on input line 153.
+Package biblatex Info: Reference segment=0 on input line 153.
+Package hyperref Info: Link coloring ON on input line 153.
+LaTeX Font Info:    Trying to load font information for OT1+lmr on input line 155.
 (/home/jdl/.TinyTeX/texmf-dist/tex/latex/lm/ot1lmr.fd
 File: ot1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OML+lmm on input line 153.
+LaTeX Font Info:    Trying to load font information for OML+lmm on input line 155.
 (/home/jdl/.TinyTeX/texmf-dist/tex/latex/lm/omllmm.fd
 File: omllmm.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 153.
+LaTeX Font Info:    Trying to load font information for OMS+lmsy on input line 155.
 (/home/jdl/.TinyTeX/texmf-dist/tex/latex/lm/omslmsy.fd
 File: omslmsy.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
-LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 153.
+LaTeX Font Info:    Trying to load font information for OMX+lmex on input line 155.
 (/home/jdl/.TinyTeX/texmf-dist/tex/latex/lm/omxlmex.fd
 File: omxlmex.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <12> on input line 153.
+(Font)              <12> on input line 155.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <8> on input line 153.
+(Font)              <8> on input line 155.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <6> on input line 153.
-LaTeX Font Info:    Trying to load font information for U+msa on input line 153.
+(Font)              <6> on input line 155.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 155.
 (/home/jdl/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 153.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 155.
 (/home/jdl/.TinyTeX/texmf-dist/tex/latex/amsfonts/umsb.fd
 File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 154.
+(Font)              <10> on input line 156.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 154.
+(Font)              <7> on input line 156.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 154.
+(Font)              <5> on input line 156.
 
-Overfull \hbox (14.29533pt too wide) in paragraph at lines 176--177
+Overfull \hbox (14.29533pt too wide) in paragraph at lines 178--179
  []\T1/lmr/m/n/10 Data are avail-able on the Open Sci-ence Frame-work (OSF): [][][][][][]. 
  []
 
@@ -1271,12 +1273,12 @@ File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 \tf@toc=\write6
 \openout6 = `Supplementary_material.toc'.
 
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 204.
+LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 206.
 (/home/jdl/.TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <10> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 218.
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 222.
 
 
 
@@ -1296,7 +1298,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
 [3]
-Underfull \vbox (badness 10000) detected at line 374
+Overfull \vbox (0.15892pt too high) detected at line 418
  []
 
 
@@ -1317,7 +1319,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
-[5{/home/jdl/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]
+[5]
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1326,7 +1328,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
-[6]
+[6{/home/jdl/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}]
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1335,25 +1337,21 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
-[7{/home/jdl/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}]
-Underfull \vbox (badness 10000) detected at line 903
+[7]
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[8{/home/jdl/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}]
+Underfull \vbox (badness 10000) detected at line 939
  []
 
 
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.83318pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.83318pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
-
-[8]
-Underfull \vbox (badness 10000) detected at line 903
- []
-
-
-Underfull \vbox (badness 10000) detected at line 903
+Underfull \vbox (badness 10000) detected at line 939
  []
 
 
@@ -1366,11 +1364,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
 [9]
-Underfull \vbox (badness 10000) detected at line 903
+Underfull \vbox (badness 10000) detected at line 939
  []
 
 
-Underfull \vbox (badness 10000) detected at line 903
+Underfull \vbox (badness 10000) detected at line 939
  []
 
 
@@ -1383,11 +1381,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
 [10]
-Underfull \vbox (badness 10000) detected at line 903
+Underfull \vbox (badness 10000) detected at line 939
  []
 
 
-Underfull \vbox (badness 10000) detected at line 903
+Underfull \vbox (badness 10000) detected at line 939
  []
 
 
@@ -1400,11 +1398,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
 [11]
-Underfull \vbox (badness 10000) detected at line 903
+Underfull \vbox (badness 10000) detected at line 939
  []
 
 
-Underfull \vbox (badness 10000) detected at line 903
+Underfull \vbox (badness 10000) detected at line 939
  []
 
 
@@ -1417,11 +1415,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
 [12]
-Underfull \vbox (badness 10000) detected at line 903
+Underfull \vbox (badness 10000) detected at line 939
  []
 
 
-Underfull \vbox (badness 10000) detected at line 903
+Underfull \vbox (badness 10000) detected at line 939
  []
 
 
@@ -1434,12 +1432,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
 [13]
-<Supplementary_material_files/figure-latex/fig-missing-data-1.pdf, id=176, 433.62pt x 289.08pt>
-File: Supplementary_material_files/figure-latex/fig-missing-data-1.pdf Graphic file (type pdf)
-<use Supplementary_material_files/figure-latex/fig-missing-data-1.pdf>
-Package pdftex.def Info: Supplementary_material_files/figure-latex/fig-missing-data-1.pdf  used on input line 964.
-(pdftex.def)             Requested size: 433.63878pt x 289.09251pt.
-
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1449,41 +1441,10 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
 [14]
-Overfull \hbox (10287.3537pt too wide) in paragraph at lines 1007--1007
-[]\T1/lmtt/m/n/10 ##   |                                                                              |                                                                      |   0%  |                                                                              |                                                                      |   1%  |                                                                              |=                                                                     |   1%  |                                                                              |=                                                                     |   2%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |==                                                                    |   4%  |                                                                              |===                                                                   |   4%  |                                                                              |===                                                                   |   5%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |=====                                                                 |   8%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |=======                                                               |  11%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |=========                                                             |  14%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |==============                                                        |  21%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  22%  |                                                                              |================                                                      |  23%  |                                                                              |================                                                      |  24%  |                                                                              |=================                                                     |  24%  |                                                                              |=================                                                     |  25%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |===================                                                   |  28%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |=====================                                                 |  31%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |=======================                                               |  34%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  36%  |                      
-                                                        |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  39%  |                                                                              |============================                                          |  40%  |                                                                              |============================                                          |  41%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |==============================                                        |  44%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |=================================                                     |  48%  |                                                                              |==================================                                    |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |===================================                                   |  51%  |                                                                              |====================================                                  |  51%  |                                                                              |====================================                                  |  52%  |                                                                              |=====================================                                 |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |=====================================                                 |  54%  |                                                                              |======================================                                |  54%  |                                                                              |======================================                                |  55%  |                                                                              |=======================================                               |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  56%  |                                                                              |========================================                              |  57%  |                                                                              |========================================                              |  58%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |==========================================                            |  61%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |============================================                          |  64%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |===================================================                   |  74%  |                                                                    
-          |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  76%  |                                                                              |======================================================                |  77%  |                                                                              |======================================================                |  78%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |========================================================              |  81%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |==========================================================            |  84%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |=================================================================     |  94%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%[] 
- []
-
-
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.83318pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.83318pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
-
-[15 <./Supplementary_material_files/figure-latex/fig-missing-data-1.pdf>]
-<Supplementary_material_files/figure-latex/fig-dredge-LS-1.pdf, id=192, 867.24pt x 578.16pt>
-File: Supplementary_material_files/figure-latex/fig-dredge-LS-1.pdf Graphic file (type pdf)
-<use Supplementary_material_files/figure-latex/fig-dredge-LS-1.pdf>
-Package pdftex.def Info: Supplementary_material_files/figure-latex/fig-dredge-LS-1.pdf  used on input line 1021.
-(pdftex.def)             Requested size: 500.48529pt x 333.65685pt.
-
-
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.83318pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.83318pt}.
-(fancyhdr)                You might also make \topmargin smaller:
-(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
-
-[16 <./Supplementary_material_files/figure-latex/fig-dredge-LS-1.pdf>]
-<Supplementary_material_files/figure-latex/fig-avg-LS-1.pdf, id=206, 433.62pt x 289.08pt>
-File: Supplementary_material_files/figure-latex/fig-avg-LS-1.pdf Graphic file (type pdf)
-<use Supplementary_material_files/figure-latex/fig-avg-LS-1.pdf>
-Package pdftex.def Info: Supplementary_material_files/figure-latex/fig-avg-LS-1.pdf  used on input line 1094.
+<Supplementary_material_files/figure-latex/fig-missing-data-1.pdf, id=190, 433.62pt x 289.08pt>
+File: Supplementary_material_files/figure-latex/fig-missing-data-1.pdf Graphic file (type pdf)
+<use Supplementary_material_files/figure-latex/fig-missing-data-1.pdf>
+Package pdftex.def Info: Supplementary_material_files/figure-latex/fig-missing-data-1.pdf  used on input line 1000.
 (pdftex.def)             Requested size: 433.63878pt x 289.09251pt.
 
 
@@ -1494,10 +1455,25 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
-[17 <./Supplementary_material_files/figure-latex/fig-avg-LS-1.pdf>]
-Underfull \hbox (badness 1590) in paragraph at lines 1119--1121
-\T1/lmr/m/it/10 kableEx-tra(v.1.4.0)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 scales(v.1.3.0)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 readr(v.2.1.5)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 per-form-ance(v.0.13.0)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 Mu-MIn(v.1.48.4)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 psych(v.2.4.12)\T1/lmr/m/n/10 ,
- []
+[15]
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[16 <./Supplementary_material_files/figure-latex/fig-missing-data-1.pdf>]
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[17]
 
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1515,7 +1491,146 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                You might also make \topmargin smaller:
 (fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
 
-[19] (./Supplementary_material.aux)
+[19]
+Underfull \vbox (badness 10000) detected at line 1255
+ []
+
+
+Underfull \vbox (badness 10000) detected at line 1255
+ []
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[20]
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[21]
+Overfull \hbox (12.59822pt too wide) in paragraph at lines 1333--1333
+ []|\T1/lmr/m/n/10 Polyconsumption 
+ []
+
+
+Overfull \hbox (1.79272pt too wide) in paragraph at lines 1333--1333
+ []|\T1/lmr/m/n/10 Discrimination| 
+ []
+
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[22
+
+{/home/jdl/.TinyTeX/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}]
+Overfull \hbox (10287.3537pt too wide) in paragraph at lines 1376--1376
+[]\T1/lmtt/m/n/10 ##   |                                                                              |                                                                      |   0%  |                                                                              |                                                                      |   1%  |                                                                              |=                                                                     |   1%  |                                                                              |=                                                                     |   2%  |                                                                              |==                                                                    |   2%  |                                                                              |==                                                                    |   3%  |                                                                              |==                                                                    |   4%  |                                                                              |===                                                                   |   4%  |                                                                              |===                                                                   |   5%  |                                                                              |====                                                                  |   5%  |                                                                              |====                                                                  |   6%  |                                                                              |=====                                                                 |   6%  |                                                                              |=====                                                                 |   7%  |                                                                              |=====                                                                 |   8%  |                                                                              |======                                                                |   8%  |                                                                              |======                                                                |   9%  |                                                                              |=======                                                               |   9%  |                                                                              |=======                                                               |  10%  |                                                                              |=======                                                               |  11%  |                                                                              |========                                                              |  11%  |                                                                              |========                                                              |  12%  |                                                                              |=========                                                             |  12%  |                                                                              |=========                                                             |  13%  |                                                                              |=========                                                             |  14%  |                                                                              |==========                                                            |  14%  |                                                                              |==========                                                            |  15%  |                                                                              |===========                                                           |  15%  |                                                                              |===========                                                           |  16%  |                                                                              |============                                                          |  16%  |                                                                              |============                                                          |  17%  |                                                                              |============                                                          |  18%  |                                                                              |=============                                                         |  18%  |                                                                              |=============                                                         |  19%  |                                                                              |==============                                                        |  19%  |                                                                              |==============                                                        |  20%  |                                                                              |==============                                                        |  21%  |                                                                              |===============                                                       |  21%  |                                                                              |===============                                                       |  22%  |                                                                              |================                                                      |  22%  |                                                                              |================                                                      |  23%  |                                                                              |================                                                      |  24%  |                                                                              |=================                                                     |  24%  |                                                                              |=================                                                     |  25%  |                                                                              |==================                                                    |  25%  |                                                                              |==================                                                    |  26%  |                                                                              |===================                                                   |  26%  |                                                                              |===================                                                   |  27%  |                                                                              |===================                                                   |  28%  |                                                                              |====================                                                  |  28%  |                                                                              |====================                                                  |  29%  |                                                                              |=====================                                                 |  29%  |                                                                              |=====================                                                 |  30%  |                                                                              |=====================                                                 |  31%  |                                                                              |======================                                                |  31%  |                                                                              |======================                                                |  32%  |                                                                              |=======================                                               |  32%  |                                                                              |=======================                                               |  33%  |                                                                              |=======================                                               |  34%  |                                                                              |========================                                              |  34%  |                                                                              |========================                                              |  35%  |                                                                              |=========================                                             |  35%  |                                                                              |=========================                                             |  36%  |                                                                              |==========================                                            |  36%  |                      
+                                                        |==========================                                            |  37%  |                                                                              |==========================                                            |  38%  |                                                                              |===========================                                           |  38%  |                                                                              |===========================                                           |  39%  |                                                                              |============================                                          |  39%  |                                                                              |============================                                          |  40%  |                                                                              |============================                                          |  41%  |                                                                              |=============================                                         |  41%  |                                                                              |=============================                                         |  42%  |                                                                              |==============================                                        |  42%  |                                                                              |==============================                                        |  43%  |                                                                              |==============================                                        |  44%  |                                                                              |===============================                                       |  44%  |                                                                              |===============================                                       |  45%  |                                                                              |================================                                      |  45%  |                                                                              |================================                                      |  46%  |                                                                              |=================================                                     |  46%  |                                                                              |=================================                                     |  47%  |                                                                              |=================================                                     |  48%  |                                                                              |==================================                                    |  48%  |                                                                              |==================================                                    |  49%  |                                                                              |===================================                                   |  49%  |                                                                              |===================================                                   |  50%  |                                                                              |===================================                                   |  51%  |                                                                              |====================================                                  |  51%  |                                                                              |====================================                                  |  52%  |                                                                              |=====================================                                 |  52%  |                                                                              |=====================================                                 |  53%  |                                                                              |=====================================                                 |  54%  |                                                                              |======================================                                |  54%  |                                                                              |======================================                                |  55%  |                                                                              |=======================================                               |  55%  |                                                                              |=======================================                               |  56%  |                                                                              |========================================                              |  56%  |                                                                              |========================================                              |  57%  |                                                                              |========================================                              |  58%  |                                                                              |=========================================                             |  58%  |                                                                              |=========================================                             |  59%  |                                                                              |==========================================                            |  59%  |                                                                              |==========================================                            |  60%  |                                                                              |==========================================                            |  61%  |                                                                              |===========================================                           |  61%  |                                                                              |===========================================                           |  62%  |                                                                              |============================================                          |  62%  |                                                                              |============================================                          |  63%  |                                                                              |============================================                          |  64%  |                                                                              |=============================================                         |  64%  |                                                                              |=============================================                         |  65%  |                                                                              |==============================================                        |  65%  |                                                                              |==============================================                        |  66%  |                                                                              |===============================================                       |  66%  |                                                                              |===============================================                       |  67%  |                                                                              |===============================================                       |  68%  |                                                                              |================================================                      |  68%  |                                                                              |================================================                      |  69%  |                                                                              |=================================================                     |  69%  |                                                                              |=================================================                     |  70%  |                                                                              |=================================================                     |  71%  |                                                                              |==================================================                    |  71%  |                                                                              |==================================================                    |  72%  |                                                                              |===================================================                   |  72%  |                                                                              |===================================================                   |  73%  |                                                                              |===================================================                   |  74%  |                                                                    
+          |====================================================                  |  74%  |                                                                              |====================================================                  |  75%  |                                                                              |=====================================================                 |  75%  |                                                                              |=====================================================                 |  76%  |                                                                              |======================================================                |  76%  |                                                                              |======================================================                |  77%  |                                                                              |======================================================                |  78%  |                                                                              |=======================================================               |  78%  |                                                                              |=======================================================               |  79%  |                                                                              |========================================================              |  79%  |                                                                              |========================================================              |  80%  |                                                                              |========================================================              |  81%  |                                                                              |=========================================================             |  81%  |                                                                              |=========================================================             |  82%  |                                                                              |==========================================================            |  82%  |                                                                              |==========================================================            |  83%  |                                                                              |==========================================================            |  84%  |                                                                              |===========================================================           |  84%  |                                                                              |===========================================================           |  85%  |                                                                              |============================================================          |  85%  |                                                                              |============================================================          |  86%  |                                                                              |=============================================================         |  86%  |                                                                              |=============================================================         |  87%  |                                                                              |=============================================================         |  88%  |                                                                              |==============================================================        |  88%  |                                                                              |==============================================================        |  89%  |                                                                              |===============================================================       |  89%  |                                                                              |===============================================================       |  90%  |                                                                              |===============================================================       |  91%  |                                                                              |================================================================      |  91%  |                                                                              |================================================================      |  92%  |                                                                              |=================================================================     |  92%  |                                                                              |=================================================================     |  93%  |                                                                              |=================================================================     |  94%  |                                                                              |==================================================================    |  94%  |                                                                              |==================================================================    |  95%  |                                                                              |===================================================================   |  95%  |                                                                              |===================================================================   |  96%  |                                                                              |====================================================================  |  96%  |                                                                              |====================================================================  |  97%  |                                                                              |====================================================================  |  98%  |                                                                              |===================================================================== |  98%  |                                                                              |===================================================================== |  99%  |                                                                              |======================================================================|  99%  |                                                                              |======================================================================| 100%[] 
+ []
+
+<Supplementary_material_files/figure-latex/fig-dredge-LS-1.pdf, id=238, 867.24pt x 578.16pt>
+File: Supplementary_material_files/figure-latex/fig-dredge-LS-1.pdf Graphic file (type pdf)
+<use Supplementary_material_files/figure-latex/fig-dredge-LS-1.pdf>
+Package pdftex.def Info: Supplementary_material_files/figure-latex/fig-dredge-LS-1.pdf  used on input line 1390.
+(pdftex.def)             Requested size: 500.48529pt x 333.65685pt.
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[23
+
+]
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[24 <./Supplementary_material_files/figure-latex/fig-dredge-LS-1.pdf>]
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[25]
+<Supplementary_material_files/figure-latex/fig-avg-LS-1.pdf, id=263, 433.62pt x 289.08pt>
+File: Supplementary_material_files/figure-latex/fig-avg-LS-1.pdf Graphic file (type pdf)
+<use Supplementary_material_files/figure-latex/fig-avg-LS-1.pdf>
+Package pdftex.def Info: Supplementary_material_files/figure-latex/fig-avg-LS-1.pdf  used on input line 1536.
+(pdftex.def)             Requested size: 433.63878pt x 289.09251pt.
+
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[26 <./Supplementary_material_files/figure-latex/fig-avg-LS-1.pdf>]
+Underfull \hbox (badness 6445) in paragraph at lines 1564--1566
+\T1/lmr/m/it/10 fast-map(v.1.2.0)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 di-gest(v.0.6.37)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 rpart(v.4.1.24)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 timechange(v.0.3.0)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 li-fe-cycle(v.1.0.4)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 cluster(v.2.1.8)\T1/lmr/m/n/10 ,
+ []
+
+
+Overfull \hbox (16.49568pt too wide) in paragraph at lines 1564--1566
+\T1/lmr/m/it/10 survival(v.3.8-3)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 mag-rittr(v.2.0.3)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 com-piler(v.4.4.3)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 rlang(v.1.1.5)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 tools(v.4.4.3)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 yaml(v.2.3.10)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 data.table(v.1.16.4)\T1/lmr/m/n/10 ,
+ []
+
+
+Underfull \hbox (badness 2689) in paragraph at lines 1564--1566
+\T1/lmr/m/it/10 0)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 withr(v.3.0.2)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 foreign(v.0.8-88)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 nnet(v.7.3-20)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 grid(v.4.4.3)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 stats4(v.4.4.3)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 colorspace(v.2.1-1)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 in-
+ []
+
+
+Underfull \hbox (badness 1509) in paragraph at lines 1564--1566
+\T1/lmr/m/it/10 sight(v.1.1.0)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 cli(v.3.6.3)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 mvtnorm(v.1.3-3)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 crayon(v.1.5.3)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 rmark-down(v.2.29)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 gen-er-ics(v.0.1.3)\T1/lmr/m/n/10 , \T1/lmr/m/it/10 rstu-di-
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[27]
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.83318pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.83318pt}.
+(fancyhdr)                You might also make \topmargin smaller:
+(fancyhdr)                \addtolength{\topmargin}{-2.83318pt}.
+
+[28] (./Supplementary_material.aux)
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -1525,18 +1640,18 @@ Package logreq Info: Writing requests to 'Supplementary_material.run.xml'.
 
  ) 
 Here is how much of TeX's memory you used:
- 36734 strings out of 475113
- 694613 string characters out of 5764476
- 2060368 words of memory out of 5000000
- 59048 multiletter control sequences out of 15000+600000
- 620444 words of font info for 83 fonts, out of 8000000 for 9000
+ 36793 strings out of 475112
+ 695717 string characters out of 5764575
+ 2059009 words of memory out of 5000000
+ 59081 multiletter control sequences out of 15000+600000
+ 624706 words of font info for 84 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 84i,13n,95p,27050b,8649s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmri8.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
-Output written on Supplementary_material.pdf (19 pages, 406746 bytes).
+ 84i,20n,95p,27050b,8649s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmr8.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmri10.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmri12.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmri8.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></home/jdl/.TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb>
+Output written on Supplementary_material.pdf (28 pages, 445743 bytes).
 PDF statistics:
- 416 PDF objects out of 1000 (max. 8388607)
- 355 compressed objects within 4 object streams
- 67 named destinations out of 1000 (max. 500000)
- 228 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 498 PDF objects out of 1000 (max. 8388607)
+ 423 compressed objects within 5 object streams
+ 87 named destinations out of 1000 (max. 500000)
+ 260 words of extra memory for PDF output out of 10000 (max. 10000000)
 

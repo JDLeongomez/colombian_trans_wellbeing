@@ -18,7 +18,7 @@ output:
     citation_package: biblatex
     highlight: zenburn
     number_sections: yes
-    keep_tex:  true
+    keep_tex:  false
     toc: no
     pandoc_args:
       - '--lua-filter=lua/scholarly-metadata.lua'
@@ -142,6 +142,8 @@ library(knitr)
 library(kableExtra)
 library(car)
 library(tidyverse)    # For data manipulation and piping
+library(gtsummary)
+library(Hmisc)
 ```
 
 ## Custom functions
@@ -171,6 +173,44 @@ pval.stars <- function(pvals) {
                 )
          )
   )
+}
+```
+
+### `corr.stars`
+
+This function creates a correlation matrix, and displays significance (function `corr.stars` modified from <http://myowelt.blogspot.com/2008/04/beautiful-correlation-tables-in-r.html>).
+
+```{r}
+# Function to create a correlation matrix with significance levels in LaTeX format
+corr.stars <- function(x) {
+  require(Hmisc) # Load Hmisc package for correlation and p-value calculations
+  x <- as.matrix(x) # Ensure input is a matrix
+  R <- rcorr(x, type= "spearman")$r # Compute correlation coefficients
+  p <- rcorr(x, type= "spearman")$P # Extract p-values for significance testing
+  # Define symbols for significance levels, using LaTeX formatting for bold and stars
+  mystars <- ifelse(p < .001, paste0("\\textbf{", round(R, 2), "***}"), # p < 0.001
+    ifelse(p < .01, paste0("\\textbf{", round(R, 2), "**}"), # p < 0.01
+      ifelse(p < .05, paste0("\\textbf{", round(R, 2), "*}"), # p < 0.05
+        ifelse(p < .10, paste0(round(R, 2), "$^{\\dagger}$"), # p < 0.10 (trend level)
+          format(round(R, 2), nsmall = 2) # Format non-significant values with two decimals
+        )
+      )
+    )
+  )
+  # Construct a new matrix with correlation values and significance symbols
+  Rnew <- matrix(mystars, ncol = ncol(x))
+  # Ensure diagonal values remain the original correlation values (without significance symbols)
+  diag(Rnew) <- paste(diag(R), " ", sep = "")
+  # Assign row and column names for the formatted matrix
+  rownames(Rnew) <- colnames(x)
+  colnames(Rnew) <- paste(colnames(x), "", sep = "")
+  # Remove the upper triangle of the matrix (including the diagonal) for a clean presentation
+  Rnew <- as.matrix(Rnew)
+  Rnew[upper.tri(Rnew, diag = TRUE)] <- ""
+  # Convert to a data frame for better handling and remove the last empty column
+  Rnew <- as.data.frame(Rnew)
+  Rnew <- cbind(Rnew[1:length(Rnew) - 1])
+  return(Rnew) # Return formatted correlation table
 }
 ```
 
@@ -298,12 +338,6 @@ avg.mod.plot <- function(avg_mod) {
 }
 ```
 
-## Set sum-to-zero contrasts for factors (needed for Type III ANOVA)
-
-```{r}
-options(contrasts = c("contr.sum", "contr.poly"))
-```
-
 ## Load data
 
 Load raw CSV data
@@ -332,7 +366,7 @@ PANAS_N <- c("PANASB_2", "PANASB_4", "PANASB_6", "PANASB_7",
 
 ### Calculate Cronbach's Alpha for Different Scales
 
-To measure the internal consistency of these tests, we used standardized Cronbach's alpha ($\alpha$ or Tau-equivalent reliability: $\rho_{T}$) coefficients, using the function `cronbach.alpha` from the package `ltm` [@LtmPackageLatent2006].
+To measure the internal consistency of these tests, we used standardized Cronbach's alpha ($\alpha$ or Tau-equivalent reliability: $\rho_{T}$) coefficients, using the function `cronbach.alpha` from the package `ltm` [@lmtcit].
 
 ```{r cronbach-alpha, message = FALSE, warning = FALSE}
 # Compute Cronbach's alpha for the Self-Efficacy (EAG) scale
@@ -835,6 +869,131 @@ Missing_data |>
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
+# Descriptives
+
+## Socio-demographic characteristics by gender
+
+```{r}
+data |> 
+  select(Age:Housing) |> 
+  rename_with(~ gsub("_", " ", .x)) |> 
+  tbl_summary(by = Gender) |> 
+  add_n() |> # add column with total number of non-missing observations
+  bold_labels() |> 
+  remove_footnote_header(columns = all_stat_cols()) |> 
+  as_kable_extra(format = "latex", 
+                 linesep = "",
+                 booktabs = TRUE, 
+                 caption = "Sociodemographic characteristics of the study participants 
+                 by gender identity") |> 
+  kable_styling(latex_options = c("scale_down", "HOLD_position")) |> 
+  footnote(general = "Values are presented as median (Q1, Q3) for Age and frequency (\\\\%) 
+           for the remaining variables.",
+           threeparttable = TRUE,
+           footnote_as_chunk = TRUE,
+           escape = FALSE)
+```
+
+## Measured variables by gender
+
+```{r}
+data |> 
+  select(Gender, Polyconsumption_Month:Community_Cohesion) |> 
+  rename_with(~ gsub("_", " ", .x)) |> 
+  tbl_summary(by = Gender) |> 
+  add_n() |> # add column with total number of non-missing observations
+  bold_labels() |> 
+  remove_footnote_header(columns = all_stat_cols()) |> 
+  as_kable_extra(format = "latex", 
+                 linesep = "",
+                 booktabs = TRUE, 
+                 caption = "Other sociodemographic, health, and psychosocial characteristics 
+                 of the study participants by gender identity") |> 
+  kable_styling(latex_options = c("scale_down", "HOLD_position")) |> 
+  footnote(general = "Continuous variables are presented as median (Q1, Q3), while categorical
+           variables are shown as frequency (\\\\%).",
+           threeparttable = TRUE,
+           footnote_as_chunk = TRUE,
+           escape = FALSE)
+```
+
+## Correlations
+
+```{r}
+# Compute correlations for all participants combined
+dat.corr.ALL <- data |>
+  select(Age, Polyconsumption_Month:Community_Cohesion) |> # Select numeric variables
+  corr.stars() |>
+  tail(-1) |> 
+  rownames_to_column(var = " ")
+
+# Compute correlations for non-binary participants
+dat.corr.NB <- data |>
+  filter(Gender == "Non-binary") |> # Select only non binary
+  select(Age, Polyconsumption_Month:Community_Cohesion) |> # Select numeric variables
+  corr.stars() |> # Compute correlation matrix with significance stars
+  tail(-1) |> 
+  rownames_to_column(var = " ") # Move row names to a column
+
+# Compute correlations for trans men
+dat.corr.TM <- data |>
+  filter(Gender == "Trans man") |> # Select only trans men
+  select(Age, Polyconsumption_Month:Community_Cohesion) |> # Select numeric variables
+  corr.stars() |>
+  tail(-1) |> 
+  rownames_to_column(var = " ")
+
+# Compute correlations for trans women
+dat.corr.TW <- data |>
+  filter(Gender == "Trans woman") |> # Select only trans women
+  select(Age, Polyconsumption_Month:Community_Cohesion) |> # Select numeric variables
+  corr.stars() |>
+  tail(-1) |> 
+  rownames_to_column(var = " ")
+
+# Format and combine the correlation tables
+bind_rows(dat.corr.ALL, dat.corr.NB, dat.corr.TM, dat.corr.TW) |>
+  rename_with(~ gsub("_", " ", .x)) |> 
+  mutate_at(" ", str_replace_all, "_", " ") |> 
+  kable(
+    digits = 2, booktabs = TRUE, 
+    align = c("l", rep("c", 13)), 
+    linesep = "",
+    caption = "Correlations between measured variables", escape = FALSE
+  ) |>
+  # Add grouped row labels for each participant group
+  pack_rows("All participants",
+    start_row = 1, end_row = 13, bold = FALSE,
+    background = "lightgray"
+  ) |>
+  pack_rows("Non binary",
+    start_row = 14, end_row = 26, bold = FALSE,
+    background = "lightgray"
+  ) |>
+  pack_rows("Trans men",
+    start_row = 27, end_row = 39, bold = FALSE,
+    background = "lightgray"
+  ) |>
+    pack_rows("Trans women",
+    start_row = 40, end_row = 52, bold = FALSE,
+    background = "lightgray"
+  ) |>
+  # Apply LaTeX styling
+  kable_styling(latex_options = c("HOLD_position", "scale_down")) |>
+  column_spec(2:10, width = "2.2cm") |> # Adjust column widths
+  # Add footnote explaining correlation significance levels
+  footnote(
+    general = paste0(
+      "Values represent Spearman correlation coefficients ($\\\\rho$). ",
+      "For significance, $^{\\\\dagger}p$ < 0.1, *$p$ < 0.05, ",
+      "**$p$ < 0.01, ***$p$ < 0.001. ",
+      "Significant correlations are in bold."
+    ),
+    threeparttable = TRUE, footnote_as_chunk = TRUE, escape = FALSE
+  ) |>
+  landscape() # Rotate table for better readability in LaTeX
+```
+
 # Multi-model inference
 
 XXXX
@@ -862,8 +1021,8 @@ global_LS <- lm(Life_Satisfaction ~ Age + Gender + Ethnicity + Marital_Status + 
 
 XXXX
 
-```{r message = FALSE, warning = FALSE}
-dr_LS<- dredge(global_LS, 
+```{r message = FALSE, warning = FALSE, cache = TRUE}
+dr_LS <- dredge(global_LS, 
                trace = 2 #para ver barra de progreso
 )
 ```
@@ -882,6 +1041,35 @@ XXXX
 
 ```{r}
 avg_LS <- model.avg(dr_LS, subset = delta < 2, fit = TRUE)
+
+model_avg = avg_LS
+
+# Extract coefficients and format as a tidy tibble
+coef_df <- as.data.frame(summary(model_avg)$coefmat.full) |> 
+  rownames_to_column(var = "Variable") |>  # Move row names to a column
+  rename(
+    estimate = Estimate,
+    std_error = `Std. Error`,
+    adj_se = `Adjusted SE`,  # Adjusted standard error from model averaging
+    z_value = `z value`,
+    p_value = `Pr(>|z|)`
+  )
+
+library(gt)
+
+coef_df |> 
+  gt() |> 
+  tab_header(title = "Model-Averaged Estimates") |> 
+  fmt_number(columns = c(estimate, std_error, adj_se, z_value, p_value), decimals = 3) |> 
+  cols_label(
+    Variable = "**Variable**",
+    estimate = "**Estimate**",
+    std_error = "**SE**",
+    adj_se = "**Adj. SE**",
+    z_value = "**Z Value**",
+    p_value = "**p-value**"
+  ) |> 
+  tab_options(table.font.size = "small")
 ```
 
 #### Table \@ref(tab:tab-avg-LS). XXXX
