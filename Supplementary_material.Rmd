@@ -9,10 +9,13 @@ author:
   - name: Juan David Leongómez \orcidlink{0000-0002-0092-6298}
     correspondence: false
     institute: codec
+
 institute:
   - andes: "Department of Psychology, University of Los Andes, Bogota 111211, Colombia"
-  - codec: "CODEC: Ciencias Cognitivas y del Comportamiento, Universidad El Bosque, Bogotá 110121, Colombia."
+  - codec: "CODEC: Cognitive and Behavioural Sciences, Faculty of Psychology, Universidad El Bosque, Bogotá 110121, Colombia."
+
 date: "`r Sys.setlocale('LC_TIME','en_GB.UTF-8');format(Sys.Date(),'%d %B, %Y')`"
+
 output:
   bookdown::pdf_document2:
     citation_package: biblatex
@@ -23,13 +26,19 @@ output:
     pandoc_args:
       - '--lua-filter=lua/scholarly-metadata.lua'
       - '--lua-filter=lua/author-info-blocks.lua'
+
 classoption: 
       - bookmarksnumbered
+
 editor_options:
   chunk_output_type: console
+
 geometry: margin=2cm
+
 header-includes: 
   \usepackage{caption} 
+  \captionsetup[figure]{position=above}
+  \setlength{\headheight}{15pt}
   \usepackage{float} 
   \floatplacement{figure}{H} 
   \usepackage[utf8]{inputenc} 
@@ -68,6 +77,7 @@ header-includes:
     singlelinecheck=false,
     labelsep=point,
     skip=5pt}
+
 always_allow_html: yes
 bibliography: bib/Bibliography.bib
 urlcolor: blue
@@ -97,7 +107,7 @@ Reyes-Rodríguez, M. F., \&  Leongómez, J. D. (in prep). \textit{\colorbox{pink
 \end{hangparas}
 ```
 
-Data are available on the Open Science Framework (OSF): \colorbox{pink}{https://doi.org/10.XXXX/OSF.IO/XXXXX}. The analyses were designed by Maria Fernanda Reyes-Rodríguez and Juan David Leongómez. This document and its underlying code were created in R Markdown by Juan David Leongómez using R and \LaTeX, ensuring full reproducibility.
+Data are available on the Open Science Framework (OSF): \colorbox{pink}{https://doi.org/10.XXXXX/OSF.IO/XXXXX}. The analyses were designed by Maria Fernanda Reyes-Rodríguez and Juan David Leongómez. This document and its underlying code were created in R Markdown by Juan David Leongómez using R and \LaTeX, ensuring full reproducibility.
 
 ------------------------------------------------------------------------
 
@@ -189,13 +199,13 @@ corr.stars <- function(x) {
   p <- rcorr(x, type= "spearman")$P # Extract p-values for significance testing
   # Define symbols for significance levels, using LaTeX formatting for bold and stars
   mystars <- ifelse(p < .001, paste0("\\textbf{", round(R, 2), "***}"), # p < 0.001
-    ifelse(p < .01, paste0("\\textbf{", round(R, 2), "**}"), # p < 0.01
-      ifelse(p < .05, paste0("\\textbf{", round(R, 2), "*}"), # p < 0.05
-        ifelse(p < .10, paste0(round(R, 2), "$^{\\dagger}$"), # p < 0.10 (trend level)
-          format(round(R, 2), nsmall = 2) # Format non-significant values with two decimals
-        )
-      )
-    )
+                    ifelse(p < .01, paste0("\\textbf{", round(R, 2), "**}"), # p < 0.01
+                           ifelse(p < .05, paste0("\\textbf{", round(R, 2), "*}"), # p < 0.05
+                                  ifelse(p < .10, paste0(round(R, 2), "$^{\\dagger}$"), # p < 0.10 (trend level)
+                                         format(round(R, 2), nsmall = 2) # Format non-significant values with two decimals
+                                  )
+                           )
+                    )
   )
   # Construct a new matrix with correlation values and significance symbols
   Rnew <- matrix(mystars, ncol = ncol(x))
@@ -214,84 +224,133 @@ corr.stars <- function(x) {
 }
 ```
 
-### `avg.model.anova`
+### `dredge.plot`
 
-XXXX
+This function generates a model selection plot from a `MuMIn::dredge()` model selection table. It visualizes the top 100 models, showing which terms are included in each model and their relative importance based on Akaike weights. It also dynamically creates a caption summarizing the number of fitted models, which can be used in fig.cap.
 
 ```{r}
-avg.model.anova <- function(avg_model, data, response) {
-  # Extract predictor names (remove intercept)
-  selected_vars <- names(coef(avg_model))[-1]
-  
-  # Ensure selected_vars exist in the dataset
-  selected_vars <- selected_vars[selected_vars %in% names(data)]
-  
-  if (length(selected_vars) == 0) {
-    stop("No valid predictors found in model-averaged object.")
+dredge.plot <- function(mod.sel.table) {
+  # Ensure the input is a dredge object
+  if (!inherits(mod.sel.table, "model.selection")) {
+    stop("Input must be a MuMIn::dredge() model selection table.")
   }
   
-  # Refit model using selected (averaged) predictors
-  weighted_model <- lm(reformulate(selected_vars, response = response), data = data)
+  # Generate the caption dynamically
+  caption <- paste0(
+    "Model selection plot. Each row represents one of the top 100 models ",
+    "(ranked by $AICc$) out of ", formatC(dim(mod.sel.table)[1], big.mark = ","), 
+    " fitted models. Blue cells indicate included terms, with shading ",
+    "intensity reflecting their Akaike weight ($w_i(AICc)$). Row height ",
+    "corresponds to each model’s relative support based on $w_i(AICc)$."
+  )
   
-  # Compute Type III ANOVA
-  anova_table <- weighted_model |>  
-    Anova(type = "III") |>  
-    broom::tidy() |> 
-    mutate_at("term", str_replace_all, "_", " ") |> 
-    mutate(df = paste(df, weighted_model$df.residual, sep = ", "),
-           p.value = pval.lev(p.value)) |>
-    filter(term != "Residuals") |> # Remove Residuals row
+  # Generate the plot
+  plot_object <- plot(mod.sel.table[1:100,], col = "#0D088750")
+  
+  # Return both the plot and the caption in a named list
+  return(list(plot = plot_object, caption = caption))
+}
+```
+
+
+### `avg.mod.summary`
+
+This function creates a formatted summary table for model-averaged coefficients obtained from `MuMIn::model.avg()`. It includes coefficient estimates and 95% confidence intervals, significance levels (formatted for LaTeX output), a dynamically generated caption including the dependent variable name, and a footnote specifying reference levels for categorical predictors.
+
+```{r}
+avg.mod.summary <- function(avg_model, data) {
+  # Function to extract relevant reference levels
+  extract_relevant_reference_levels <- function(avg_model, data) {
+    # Identify factor variables in the dataset
+    factor_vars <- names(data)[sapply(data, is.factor)]
+    # Get reference levels for each factor variable
+    ref_levels <- sapply(factor_vars, function(var) levels(data[[var]])[1])
+    # Extract model terms
+    model_terms <- rownames(summary(avg_model)$coefmat.full)
+    # Detect which model terms correspond to factor variables
+    relevant_factors <- factor_vars[sapply(factor_vars, function(var) any(grepl(paste0("^", var), model_terms)))]
+    # Keep only reference levels for relevant factors
+    relevant_refs <- ref_levels[names(ref_levels) %in% relevant_factors]
+    # Format the output
+    if (length(relevant_refs) > 0) {
+      paste0("Reference levels: ", paste0(names(relevant_refs), " = ", relevant_refs, collapse = "; "))
+    } else {
+      "No factor variables in the average model"
+    }
+  }
+  
+  # Compute CIs
+  cis <- confint(avg_model, full = TRUE) |> 
+    as.data.frame() |> 
+    mutate(across(everything(), round, 3)) |> 
+    unite(col = "CI", `2.5 %`:`97.5 %`, sep = " — ")
+  
+  # Full average summary table
+  summ_table <- summary(avg_model)$coefmat.full |>  
+    as.data.frame() |>  
+    bind_cols(cis) |> 
+    rownames_to_column(var = "term") |> 
+    mutate(term = term |> 
+             str_replace_all("Gender", "Gender: ") |> 
+             str_replace_all("Housing", "Housing: ") |> 
+             str_replace_all("_", " ")) |> 
+    select(term, Estimate, CI, `z value`, `Pr(>|z|)`) |> 
+    mutate(`Pr(>|z|)` = pval.lev(`Pr(>|z|)`)) |>
     kable(digits = 3,
           booktabs = TRUE,
           linesep = "",
           align = c("l", rep("c", 4)),
-          caption = "XXXXXX",
-          col.names = c("Term", "$SS_{term}$", "$df$", "$F$", "$p$"),
+          caption = paste0("Coefficient estimates for the ", 
+                           as.character(avg_model$formula)[2] |> 
+                              str_replace("_", " "),
+                           " model."),
+          col.names = c("Term", "$B$", "$95 \\% CIs$", "$z$", "$p$"),
           escape = FALSE) |> 
     kable_styling(latex_options = "HOLD_position") |>
     footnote(
-      general = "This ANOVA table was generated based on model-averaged estimates from 
-      multimodel inference. The predictor terms included in the model were selected based on 
-      their relative importance across candidate models ($\\\\Delta AICc$ < 2). 
-      Sum of squares ($SS_{term}$) values correspond to Type III ANOVA calculations, 
-      which test each term's contribution while controlling for all other predictors. 
-      Degrees of freedom ($df$) are presented as term $df$ and residual $df$, where residual 
-      $df$ reflects the remaining degrees of freedom in the model. The $F$ and $p$ values were
-      computed from the refitted model using only the selected predictors.
-      Significant effects are in bold.",
+      general = paste0(
+        "This table includes estimates based on a full model average. ",
+        "The full model average ensures that all variables are included in every model, ",
+        "with coefficients set to zero when absent. As a consequence, it acts as a shrinkage ",
+        "estimator, making estimates more conservative. ",
+        "$B$ represents unstandardized model coefficients. ",
+        extract_relevant_reference_levels(avg_model, data),  # Now using the internal function
+        ". Significant effects are in bold."
+      ),
       threeparttable = TRUE, 
       footnote_as_chunk = TRUE, 
       escape = FALSE
     )
-  return(anova_table)
+  
+  return(summ_table)
 }
 ```
 
 ### `avg.mod.plot`
 
-XXXX 
+This function visualizes model-averaged estimates from `MuMIn::model.avg()`, displaying point estimates with 95% confidence intervals, predictor importance (mapped to point size and colour), and a dynamically generated annotation for the number of averaged model.
 
 ```{r}
 avg.mod.plot <- function(avg_mod) {
   # Extract model summary and transform into a tidy format
   x <- summary(avg_mod)$coefmat.full |> 
-  as_tibble(rownames = "key") |>  # Convert row names to a "key" column
-  bind_cols(
-    confint(avg_mod, full = TRUE) |> as_tibble(),  # Add confidence intervals
-    summary(avg_mod)$coef.nmod |> 
-      as_tibble() |> 
-      pivot_longer(cols = everything(), names_to = "model", values_to = "value")  # Gather number of models per term
-  ) |> 
-  mutate(
-    avmod = deparse(substitute(avg_mod)) |> 
-      factor(),  # Store model name as a factor
-    value = value / max(value, na.rm = TRUE),  # Normalize 'value' column
-    sig = pval.stars(`Pr(>|z|)`) |> 
-      str_replace("\\.", "†"),  # Convert p-values into significance stars
-    key = key |> 
-      str_replace_all("Gender", "Gender: ") |> 
-      str_replace_all("Housing", "Housing: ") |> 
-      str_replace_all("_", " ")) 
+    as_tibble(rownames = "key") |>  # Convert row names to a "key" column
+    bind_cols(
+      confint(avg_mod, full = TRUE) |> as_tibble(),  # Add confidence intervals
+      summary(avg_mod)$coef.nmod |> 
+        as_tibble() |> 
+        pivot_longer(cols = everything(), names_to = "model", values_to = "value")  # Gather number of models per term
+    ) |> 
+    mutate(
+      avmod = deparse(substitute(avg_mod)) |> 
+        factor(),  # Store model name as a factor
+      value = value / max(value, na.rm = TRUE),  # Normalize 'value' column
+      sig = pval.stars(`Pr(>|z|)`) |> 
+        str_replace("\\.", "†"),  # Convert p-values into significance stars
+      key = key |> 
+        str_replace_all("Gender", "Gender: ") |> 
+        str_replace_all("Housing", "Housing: ") |> 
+        str_replace_all("_", " ")) 
   
   x <- x |> 
     mutate(key = factor(key, levels = as.character(unique(x$key))))
@@ -313,10 +372,10 @@ avg.mod.plot <- function(avg_mod) {
     # Apply theme and labels
     theme_bw() +
     labs(x = NULL, y = "Estimate") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
     # Scale for importance (value) size
     scale_size_continuous(range = c(2, 8),
-                          breaks = seq(0, 1, by = 0.2)) +
+                          breaks = seq(0, 1, by = 0.25)) +
     # Legends for size and color
     guides(size = guide_legend(title = "Importance"),
            color = guide_legend(title = "Importance")) +
@@ -348,7 +407,12 @@ data_RAW <- read_csv("data/data.csv")
 
 ### Define PANAS Subscales (Positive & Negative Affect)
 
-XXXXXXX 
+The Positive and Negative Affect Schedule (PANAS) is a widely used self-report questionnaire that measures two independent dimensions of affect:
+
+* Positive Affect (PA): Reflects the extent to which a person feels enthusiastic, active, and alert.
+* Negative Affect (NA): Represents distress and unpleasurable engagement, including emotions such as fear, anger, and nervousness.
+
+The following lists define the PANAS subscales based on their respective items.
 
 ```{r message = FALSE}
 # List of PANAS Positive Affect (PANAS_P) items
@@ -478,7 +542,13 @@ tibble(
 
 ## Renaming, recoding, and filtering
 
-XXXX
+This section prepares the raw dataset (`data_RAW`) and creates a dataser (`data`)for analysis by:
+
+* Renaming variables to meaningful labels
+* Handling missing values (99 → NA)
+* Recoding categorical variables into human-readable labels
+* Aggregating key variables (e.g., polyconsumption, discrimination, depression)
+* Filtering out ineligible cases (e.g., participants under 18)
 
 ```{r message = FALSE}
 data <- data_RAW |>
@@ -854,7 +924,8 @@ Missing_data |>
   scale_fill_viridis_c(
     option = "plasma",  # Define color range
     direction = -1,  # Reverse the color scale
-    labels = percent_format(accuracy = 1)  # Convert legend values to percentage format
+    labels = percent_format(accuracy = 1),  # Convert legend values to percentage format
+    alpha = 0.7
   ) + 
   # Convert Y-axis (proportion of missing data) to a percentage scale
   scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
@@ -866,7 +937,7 @@ Missing_data |>
   # Use a minimal theme for a cleaner visual appearance
   theme_minimal() +
   # Rotate X-axis labels for better readability
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
 ```
 
 # Descriptives
@@ -963,20 +1034,20 @@ bind_rows(dat.corr.ALL, dat.corr.NB, dat.corr.TM, dat.corr.TW) |>
   ) |>
   # Add grouped row labels for each participant group
   pack_rows("All participants",
-    start_row = 1, end_row = 13, bold = FALSE,
-    background = "lightgray"
+            start_row = 1, end_row = 13, bold = FALSE,
+            background = "lightgray"
   ) |>
   pack_rows("Non binary",
-    start_row = 14, end_row = 26, bold = FALSE,
-    background = "lightgray"
+            start_row = 14, end_row = 26, bold = FALSE,
+            background = "lightgray"
   ) |>
   pack_rows("Trans men",
-    start_row = 27, end_row = 39, bold = FALSE,
-    background = "lightgray"
+            start_row = 27, end_row = 39, bold = FALSE,
+            background = "lightgray"
   ) |>
-    pack_rows("Trans women",
-    start_row = 40, end_row = 52, bold = FALSE,
-    background = "lightgray"
+  pack_rows("Trans women",
+            start_row = 40, end_row = 52, bold = FALSE,
+            background = "lightgray"
   ) |>
   # Apply LaTeX styling
   kable_styling(latex_options = c("HOLD_position", "scale_down")) |>
@@ -994,13 +1065,54 @@ bind_rows(dat.corr.ALL, dat.corr.NB, dat.corr.TM, dat.corr.TW) |>
   landscape() # Rotate table for better readability in LaTeX
 ```
 
-# Multi-model inference
+# Multi-model Inference  
 
-XXXX
+This section outlines the multi-model inference approach used to examine predictors of various outcome variables. The strategy follows a systematic model selection process, accounting for model uncertainty.  
+
+For each outcome variable, we repeated the following steps:  
+
+\begin{enumerate}
+  \item \textbf{Data Preparation}  
+    \begin{itemize}
+      \item Relevant predictors are selected from the cleaned dataset.
+      \item Missing values are removed to ensure complete case analysis\footnote{To maximize the number of non-missing cases, we created separate datasets for each outcome variable. Since models generated by \texttt{dredge()} must not contain missing values (NA) to remain comparable, this approach ensures that each model includes the largest possible sample size.}
+    \end{itemize}
+
+  \item \textbf{Global Model Specification}  
+    \begin{itemize}
+      \item A linear model (\texttt{lm}) is specified, including a broad set of demographic, psychological, and social predictors.
+      \item This full model represents all hypothesized influences on the outcome.
+    \end{itemize}
+
+  \item \textbf{Model Selection via \texttt{dredge()}}  
+    \begin{itemize}
+      \item The \texttt{MuMIn::dredge()} function generates all possible \textbf{nested models} from the global model.
+      \item Models are ranked by Akaike’s Information Criterion corrected for small sample sizes ($AICc$).
+      \item This helps identify the most parsimonious models while considering model uncertainty.
+    \end{itemize}
+
+  \item \textbf{Model Averaging (\texttt{model.avg})}  
+    \begin{itemize}
+      \item Models with $\Delta AICc$ < 2 (within two $AICc$ units of the top model) are averaged.
+      \item This produces shrinkage estimates, ensuring robust coefficient estimates.
+    \end{itemize}
+
+  \item \textbf{Results Interpretation}  
+    \begin{itemize}
+      \item Tables summarize the coefficient estimates, importance values, and significance levels.
+      \item Figures visualize term estimates, confidence intervals, and predictor importance.
+    \end{itemize}
+\end{enumerate}
+
+This process is repeated for each outcome variable in the following sections.  
+
+[^1]: To maximize the number of non-missing cases, we created separate datasets for each outcome variable. Since models generated by `dredge()` must not contain missing values to remain comparable, this approach ensures that each model includes the largest possible sample size. 
 
 ## Life Satisfaction model
 
-XXXX
+This section details the modelling process for Life Satisfaction, including data preparation, model selection using Akaike’s Information Criterion corrected for small sample sizes ($AICc$), and model averaging based on the best-ranked models.
+
+The global model includes a broad set of predictors representing demographic, psychological, and social factors, allowing us to explore their relative contributions to Life Satisfaction. The model selection procedure identifies the most parsimonious models while accounting for model uncertainty.
 
 ```{r}
 dat_LS <- data |> 
@@ -1019,76 +1131,45 @@ global_LS <- lm(Life_Satisfaction ~ Age + Gender + Ethnicity + Marital_Status + 
 
 ### Dredge
 
-XXXX
+To identify the best-fitting models, we perform automated model selection using `MuMIn::dredge()`, which fits all possible models nested within the global model and ranks them based on $AICc$. This helps determine the most important predictors of Life Satisfaction while considering model uncertainty.
 
 ```{r message = FALSE, warning = FALSE, cache = TRUE}
 dr_LS <- dredge(global_LS, 
-               trace = 2 #para ver barra de progreso
+                # trace = 2 # uncomment to see progress bar
 )
 ```
 
 #### Fig. \@ref(fig:fig-dredge-LS). Dredge results of the Life Satisfaction model
 
-XXXX
+The plot below visualizes the model selection results, displaying the top 100 models ranked by $AICc$. Each row represents an individual model, with blue cells indicating included predictors. The height of each row reflects the model’s Akaike weight ($w_i(AICc)$), representing its relative support in the model set.
 
-```{r fig-dredge-LS, fig.height = 8, fig.cap = "XXXX."}
-plot(dr_LS[1:100,])
+```{r fig-dredge-LS, fig.height = 8, fig.cap = LS_dredge_pĺot$caption}
+LS_dredge_pĺot <- dredge.plot(dr_LS)  # Run the function and store the result
 ```
 
 ### Average model
 
-XXXX
+To account for model uncertainty, we compute an averaged model that combines estimates from all models with $\Delta AICc$ < 2 (i.e., models within two $AICc$ units of the best-supported model). This approach produces more robust and conservative parameter estimates, reducing overconfidence in any single model.
 
 ```{r}
 avg_LS <- model.avg(dr_LS, subset = delta < 2, fit = TRUE)
-
-model_avg = avg_LS
-
-# Extract coefficients and format as a tidy tibble
-coef_df <- as.data.frame(summary(model_avg)$coefmat.full) |> 
-  rownames_to_column(var = "Variable") |>  # Move row names to a column
-  rename(
-    estimate = Estimate,
-    std_error = `Std. Error`,
-    adj_se = `Adjusted SE`,  # Adjusted standard error from model averaging
-    z_value = `z value`,
-    p_value = `Pr(>|z|)`
-  )
-
-library(gt)
-
-coef_df |> 
-  gt() |> 
-  tab_header(title = "Model-Averaged Estimates") |> 
-  fmt_number(columns = c(estimate, std_error, adj_se, z_value, p_value), decimals = 3) |> 
-  cols_label(
-    Variable = "**Variable**",
-    estimate = "**Estimate**",
-    std_error = "**SE**",
-    adj_se = "**Adj. SE**",
-    z_value = "**Z Value**",
-    p_value = "**p-value**"
-  ) |> 
-  tab_options(table.font.size = "small")
 ```
 
-#### Table \@ref(tab:tab-avg-LS). XXXX
+#### Table \@ref(tab:tab-avg-LS). Term estimates for the Life Satisfaction model
 
-XXXX
+The table below presents coefficient estimates from the full average model, including 95% confidence intervals, standard errors, and significance levels. 
 
 ```{r tab-avg-LS, message = FALSE, warning = FALSE}
-avg.model.anova(avg_LS, data = dat_LS, response = "Life_Satisfaction")
+avg.mod.summary(avg_LS, data = dat_LS)
 ```
 
-#### Fig. \@ref(fig:fig-avg-LS). Dredge results of the Life Satisfaction model
+#### Fig. \@ref(fig:fig-avg-LS). Term estimates for the Life Satisfaction model
 
-XXXX
+This figure represents parameter estimates from the model-averaged coefficients.
 
-```{r fig-avg-LS, warning = FALSE, fig.height = 4, fig.width = 6, fig.cap = "XXXX."}
+```{r fig-avg-LS, warning = FALSE, fig.height = 6, fig.width = 8, fig.cap = "Term estimates with 95% confidence intervals for the final model average of the best (AICc $\\Delta$ < 2) models predicting Life Satisfaction. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the veraged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
 avg.mod.plot(avg_LS)
 ```
-
-
 
 -----------------------------------------------------------------------
 
