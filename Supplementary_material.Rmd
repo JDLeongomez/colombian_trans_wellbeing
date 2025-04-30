@@ -227,7 +227,7 @@ corr.stars <- function(x) {
 
 ### `dredge.plot`
 
-This function generates a model selection plot from a `MuMIn::dredge()` model selection table. It visualizes the top 100 models, showing which terms are included in each model and their relative importance based on Akaike weights. It also dynamically creates a caption summarizing the number of fitted models, which can be used in fig.cap.
+This function generates a model selection plot from a `MuMIn::dredge()` model selection table. It visualizes the top 100 models, showing which terms are included in each model and their relative importance based on Akaike weights. The function also dynamically creates a caption summarizing the number of fitted models, suitable for use as a LaTeX or R Markdown fig.cap. Additionally, it saves the plot as a PDF file in a PDF_plots/ subdirectory (relative to the project root), with the filename based on the input object’s name
 
 ```{r}
 dredge.plot <- function(mod.sel.table) {
@@ -235,20 +235,32 @@ dredge.plot <- function(mod.sel.table) {
   if (!inherits(mod.sel.table, "model.selection")) {
     stop("Input must be a MuMIn::dredge() model selection table.")
   }
-
-  # Generate the caption dynamically
+  # Extract the first model call from the dredge object
+  model_call <- attr(mod.sel.table, "model.calls")[[1]]
+  # Extract the response variable from the formula
+  response_var <- all.vars(model_call$formula)[1]
+  # Apply replacement logic
+  response_label <- gsub("_", " ", response_var)
+  # Create output directory if it doesn't exist
+  dir.create("PDF_plots", showWarnings = FALSE)
+  # Define output file path
+  file_path <- file.path("PDF_plots", paste0(response_var, ".pdf"))
+  # Save the plot to PDF
+  pdf(file_path, width = 8, height = 6)
+  plot_object <- plot(mod.sel.table[1:100, ], col = "#A92395FF",
+                      main = NULL)
+  dev.off()
+  # Display the plot in the active graphics device (console/Rmd)
+  plot(mod.sel.table[1:100, ], col = "#A92395FF", 
+       main = NULL, par.vlab = NULL)
+  # Generate the caption
   caption <- paste0(
     "Model selection plot. Each row represents one of the top 100 models ",
-    "(ranked by $AICc$) out of ", formatC(dim(mod.sel.table)[1], big.mark = ","),
-    " fitted models. Blue cells indicate included terms, with shading ",
-    "intensity reflecting their Akaike weight ($w_i(AICc)$). Row height ",
-    "corresponds to each model’s relative support based on $w_i(AICc)$."
+    "(ranked by $AICc$) out of ", formatC(nrow(mod.sel.table), big.mark = ","),
+    " fitted models. Purple cells indicate included terms, with row height corresponding",
+    " to each model’s relative support based on its Akaike weight ($w_i(AICc)$)"
   )
-
-  # Generate the plot
-  plot_object <- plot(mod.sel.table[1:100, ], col = "#0D088750")
-
-  # Return both the plot and the caption in a named list
+  # Return both the plot object and the caption
   return(list(plot = plot_object, caption = caption))
 }
 ```
@@ -318,7 +330,7 @@ avg.mod.summary <- function(avg_model, data) {
     caption = paste0(
       "Coefficient estimates for the ",
       as.character(avg_model$formula)[2] |>
-        str_replace("_", " "),
+        str_replace_all("_", " "),
       " model."
     ),
     col.names = c("Term", "$B$", "$95 \\% CIs$", "$z$", "$p$"),
@@ -924,11 +936,11 @@ data <- data_RAW |>
       rowMeans(across(starts_with("MOS2_")), na.rm = TRUE),
       NA_real_
     ),
-    Positive_Affect = if_else(rowSums(!is.na(across(all_of(PANAS_P)))) >= 8,
+    PANAS_Positive_Affect = if_else(rowSums(!is.na(across(all_of(PANAS_P)))) >= 8,
       rowMeans(across(all_of(PANAS_P)), na.rm = TRUE),
       NA_real_
     ),
-    Negative_Affect = if_else(rowSums(!is.na(across(all_of(PANAS_N)))) >= 9,
+    PANAS_Negative_Affect = if_else(rowSums(!is.na(across(all_of(PANAS_N)))) >= 9,
       rowMeans(across(all_of(PANAS_N)), na.rm = TRUE),
       NA_real_
     ),
@@ -1075,8 +1087,8 @@ data |>
     Resilience_sum, 
     Depression_sum, 
     Social_Support_sum, 
-    Positive_Affect, 
-    Negative_Affect,
+    PANAS_Positive_Affect, 
+    PANAS_Negative_Affect,
     Community_Cohesion
   ) |>
   rename_with(~ gsub("Self_efficacy", "Self-efficacy", .x)) |>
@@ -1168,8 +1180,8 @@ desc_long_data <- data |>
     Resilience_sum, 
     Depression_sum, 
     Social_Support_sum, 
-    Positive_Affect, 
-    Negative_Affect,
+    PANAS_Positive_Affect, 
+    PANAS_Negative_Affect,
     Community_Cohesion
   ) |>
   pivot_longer(
@@ -1403,14 +1415,14 @@ The global model includes a broad set of predictors representing demographic, ps
 ```{r}
 dat_PANAS_P <- data |>
   select(
-    Positive_Affect, Age, Gender, Ethnicity, Marital_Status, Education, Housing,
+    PANAS_Positive_Affect, Age, Gender, Ethnicity, Marital_Status, Education, Housing,
     Self_efficacy, Community_Cohesion, Depression, Social_Support, Polyconsumption_Month,
     Disease_Burden, Discrimination, Group_Membership, Community_Engagement
   ) |>
   drop_na()
 
 global_PANAS_P <- lm(
-  Positive_Affect ~ Age + Gender + Ethnicity + Marital_Status + Education +
+  PANAS_Positive_Affect ~ Age + Gender + Ethnicity + Marital_Status + Education +
     Housing + Self_efficacy + Community_Cohesion + Depression +
     Social_Support + Polyconsumption_Month + Disease_Burden + Discrimination +
     Group_Membership + Community_Engagement,
@@ -1473,14 +1485,14 @@ The global model includes a broad set of predictors representing demographic, ps
 ```{r}
 dat_PANAS_N <- data |>
   select(
-    Negative_Affect, Age, Gender, Ethnicity, Marital_Status, Education, Housing,
+    PANAS_Negative_Affect, Age, Gender, Ethnicity, Marital_Status, Education, Housing,
     Self_efficacy, Community_Cohesion, Depression, Social_Support, Polyconsumption_Month,
     Disease_Burden, Discrimination, Group_Membership, Community_Engagement
   ) |>
   drop_na()
 
 global_PANAS_N <- lm(
-  Negative_Affect ~ Age + Gender + Ethnicity + Marital_Status + Education +
+  PANAS_Negative_Affect ~ Age + Gender + Ethnicity + Marital_Status + Education +
     Housing + Self_efficacy + Community_Cohesion + Depression +
     Social_Support + Polyconsumption_Month + Disease_Burden + Discrimination +
     Group_Membership + Community_Engagement,
@@ -1557,6 +1569,20 @@ ggarrange(p_desc1 +
           widths = c(2,1))
 ```
 
+## Fig. \@ref(fig:fig-full-dredge). Distribution of participants' measured variables by gender
+
+```{r fig-full-dredge, warning = FALSE, fig.width = 10, fig.height = 7, fig.cap = "Model selection plot. \\textbf{(a)} Life Satisfaction; \\textbf{(b)} PANAS Positive Affect; \\textbf{(c)} PANAS Negative Affect. In all cases, each row represents one of the top 100 models (ranked by $AICc$) out of 32,768 fitted models. Purple cells indicate included terms, with row height corresponding to each model’s relative support based on its Akaike weight ($w_i(AICc)$). Numbers on the right identify the top models."}
+
+library(magick)
+library(ggplotify)
+library(pdftools)
+ggarrange(as.ggplot(image_read_pdf("PDF_plots/Life_Satisfaction.pdf")), 
+          as.ggplot(image_read_pdf("PDF_plots/PANAS_Positive_Affect.pdf")),
+          as.ggplot(image_read_pdf("PDF_plots/PANAS_Negative_Affect.pdf")),
+          labels = "auto",
+          ncol = 2,
+          nrow = 2)
+```
 
 ## Tab. \@ref(tab:tab-avg-mods). Term estimates for the three final averaged model
 
