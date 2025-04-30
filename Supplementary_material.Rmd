@@ -155,6 +155,9 @@ library(tidyverse) # For data manipulation and piping
 library(ggpubr)
 library(gtsummary)
 library(Hmisc)
+library(magick)
+library(ggplotify)
+library(pdftools)
 ```
 
 ## Custom functions
@@ -315,6 +318,7 @@ avg.mod.summary <- function(avg_model, data) {
              str_replace_all("Housing", "Housing: ") |>
              str_replace_all("Ethnicity", "Ethnicity: ") |>
              str_replace_all("Education", "Education: ") |>
+             str_replace_all("Discrimination", "Discrimination: ") |>
              str_replace_all("Self_efficacy", "Self-efficacy") |>
              str_replace_all("_", " ")) |>
     select(term, Estimate, CI, `z value`, `Pr(>|z|)`) |>
@@ -385,6 +389,7 @@ avg.mod.plot <- function(avg_mod) {
         str_replace_all("Housing", "Housing: ") |>
         str_replace_all("Ethnicity", "Ethnicity: ") |>
         str_replace_all("Education", "Education: ") |>
+        str_replace_all("Discrimination", "Discrimination: ") |>
         str_replace_all("Self_efficacy", "Self-efficacy") |>
         str_replace_all("_", " ")
     )
@@ -400,7 +405,7 @@ avg.mod.plot <- function(avg_mod) {
     # Add horizontal reference line at zero
     geom_hline(yintercept = 0, color = "grey") +
     # Add points sized and colored by importance
-    geom_point(aes(size = value, color = value), alpha = 0.5) +
+    geom_point(aes(size = value, color = value), alpha = 0.7) +
     # Add error bars (confidence intervals)
     geom_errorbar(aes(ymin = `2.5 %`, ymax = `97.5 %`),
                   colour = "black", width = 0.1
@@ -613,7 +618,7 @@ This section prepares the raw dataset (`data_RAW`) and creates a dataset (`data`
 * Estimate participant scores for item-based scales (Self-efficacy, Life Satisfaction, Resilience, Depression, Social Support, Positive Affect, Negative Affect, Community Cohesion)
 * Filtering out ineligible cases (e.g., participants under 18)
 
-To estimate participant scores for item-based scales (i.e., Self-efficacy, Life Satisfaction, Resilience, Depression, Social Support, Positive Affect, Negative Affect, and Community Cohesion), and to minimise missing data in multi-model inference procedures, we computed scores in accordance with recommended practices [see @grahamMissingData2012], using Cronbach’s alpha levels to guide acceptable thresholds for missing data. For scales with Cronbach’s alpha values $\geq$ .90 (e.g., Self-efficacy and Social Support), scores were calculated when at least 50% of the items had been completed. For scales with alpha values $\geq$ .80 < .90 (e.g., Life Satisfaction, Resilience, and PANAS), up to 20% of items could be missing. For scales with alpha values $\geq$ .70 and < .80 (e.g., Depression and Community Cohesion), scores were calculated only when participants had one or no missing item. Scores of participants who did not meet these criteria for a given scale were treated as missing data (i.e., their scale score was set to NA).
+To estimate participant scores for item-based scales (i.e., Self-efficacy, Life Satisfaction, Resilience, Depression, Social Support, Positive Affect, Negative Affect, and Community Cohesion), and to minimise missing data in multi-model inference procedures, we computed scores in accordance with recommended practices [see @grahamMissingData2012], using Cronbach’s alpha levels to guide acceptable thresholds for missing data. For scales with Cronbach’s alpha values $\geq$ 0.90 (e.g., Self-efficacy and Social Support), scores were calculated when at least 50% of the items had been completed. For scales with alpha values $\geq$ 0.80 < 0.90 (e.g., Life Satisfaction, Resilience, and PANAS), up to 20% of items could be missing. For scales with alpha values $\geq$ 0.70 and < 0.80 (e.g., Depression and Community Cohesion), scores were calculated only when participants had one or no missing item. Scores of participants who did not meet these criteria for a given scale were treated as missing data (i.e., their scale score was set to NA).
 
 This procedure implies that the number of items used to compute scale scores may vary across participants. To account for this, all scale scores were calculated as the mean of available items, even for scales that are typically computed as a sum: Self-efficacy, Life Satisfaction, Resilience, Depression, and Social Support. For these scales, however, an alternative, more traditional sum score was also computed for participants with complete item responses, and this version was used to report more readable descriptive statistics in Table \@ref(tab:tab-desc-scores).
 
@@ -1572,10 +1577,6 @@ ggarrange(p_desc1 +
 ## Fig. \@ref(fig:fig-full-dredge). Distribution of participants' measured variables by gender
 
 ```{r fig-full-dredge, warning = FALSE, fig.width = 10, fig.height = 7, fig.cap = "Model selection plot. \\textbf{(a)} Life Satisfaction; \\textbf{(b)} PANAS Positive Affect; \\textbf{(c)} PANAS Negative Affect. In all cases, each row represents one of the top 100 models (ranked by $AICc$) out of 32,768 fitted models. Purple cells indicate included terms, with row height corresponding to each model’s relative support based on its Akaike weight ($w_i(AICc)$). Numbers on the right identify the top models."}
-
-library(magick)
-library(ggplotify)
-library(pdftools)
 ggarrange(as.ggplot(image_read_pdf("PDF_plots/Life_Satisfaction.pdf")), 
           as.ggplot(image_read_pdf("PDF_plots/PANAS_Positive_Affect.pdf")),
           as.ggplot(image_read_pdf("PDF_plots/PANAS_Negative_Affect.pdf")),
@@ -1614,7 +1615,7 @@ tab_avg_LS$coefficients |>
       As a consequence, it acts as a shrinkage ",
       "estimator, making estimates more conservative. ",
       "$B$ represents unstandardized model coefficients for each of the three models:
-      Life Satisfaction(", tab_avg_LS$reference_levels, "), 
+      Life Satisfaction (", tab_avg_LS$reference_levels, "), 
       PANAS Positive Afffect(", tab_avg_PANAS_P$reference_levels, "), 
       and PANAS Negative Afffect(", tab_avg_PANAS_N$reference_levels, ").",
       " Significant effects are in bold."
