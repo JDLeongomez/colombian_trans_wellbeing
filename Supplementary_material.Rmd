@@ -230,7 +230,7 @@ corr.stars <- function(x) {
 
 ### `dredge.plot`
 
-This function generates a model selection plot from a `MuMIn::dredge()` model selection table. It visualizes the top 100 models, showing which terms are included in each model and their relative importance based on Akaike weights. The function also dynamically creates a caption summarizing the number of fitted models, suitable for use as a LaTeX or R Markdown fig.cap. Additionally, it saves the plot as a PDF file in a PDF_plots/ subdirectory (relative to the project root), with the filename based on the input object’s name
+This function generates a model selection plot from a `MuMIn::dredge()` model selection table. It visualizes the top 100 candidate  models, showing which terms are included in each model and their relative importance based on Akaike weights. The function also dynamically creates a caption summarizing the number of fitted models, suitable for use as a LaTeX or R Markdown fig.cap. Additionally, it saves the plot as a PDF file in a PDF_plots/ subdirectory (relative to the project root), with the filename based on the input object’s name
 
 ```{r}
 dredge.plot <- function(mod.sel.table) {
@@ -261,7 +261,7 @@ dredge.plot <- function(mod.sel.table) {
     "Model selection plot. Each row represents one of the top 100 models ",
     "(ranked by $AICc$) out of ", formatC(nrow(mod.sel.table), big.mark = ","),
     " fitted models. Purple cells indicate included terms, with row height corresponding",
-    " to each model’s relative support based on its Akaike weight ($w_i(AICc)$)"
+    " to each model’s relative support based on its Akaike weight ($\\\\omega$)"
   )
   # Return both the plot object and the caption
   return(list(plot = plot_object, caption = caption))
@@ -1379,7 +1379,7 @@ dr_LS <- dredge(
 
 #### Fig. \@ref(fig:fig-dredge-LS). Dredge results of the Life Satisfaction model
 
-The plot below visualizes the model selection results, displaying the top 100 models ranked by $AICc$. Each row represents an individual model, with blue cells indicating included predictors. The height of each row reflects the model’s Akaike weight ($w_i(AICc)$), representing its relative support in the model set.
+The plot below visualizes the model selection results, displaying the top 100 models ranked by $AICc$. Each row represents an individual model, with blue cells indicating included predictors. The height of each row reflects the model’s Akaike weight ($\omega$), representing its relative support in the model set.
 
 ```{r fig-dredge-LS, fig.height = 8, fig.cap = LS_dredge_pĺot$caption}
 LS_dredge_pĺot <- dredge.plot(dr_LS) # Run the function and store the result
@@ -1406,7 +1406,7 @@ tab_avg_LS$table
 
 This figure represents parameter estimates from the model-averaged coefficients.
 
-```{r fig-avg-LS, warning = FALSE, fig.height = 6, fig.width = 8, fig.cap = "Term estimates with 95% confidence intervals for the final model average of the best (AICc $\\Delta$ < 2) models predicting Life Satisfaction. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the veraged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
+```{r fig-avg-LS, warning = FALSE, fig.height = 6, fig.width = 8, fig.cap = "Term estimates with 95% confidence intervals for the final model average of the best (AICc $\\Delta$ < 2) models predicting Life Satisfaction. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the averaged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
 fig_avg_LS <- avg.mod.plot(avg_LS)
 fig_avg_LS
 ```
@@ -1449,7 +1449,7 @@ dr_PANAS_P <- dredge(
 
 #### Fig. \@ref(fig:fig-dredge-PANAS-P). Dredge results of the PANAS Positive Affect model
 
-The plot below visualizes the model selection results, displaying the top 100 models ranked by $AICc$. Each row represents an individual model, with blue cells indicating included predictors. The height of each row reflects the model’s Akaike weight ($w_i(AICc)$), representing its relative support in the model set.
+The plot below visualizes the model selection results, displaying the top 100 models ranked by $AICc$. Each row represents an individual model, with blue cells indicating included predictors. The height of each row reflects the model’s Akaike weight ($\omega$), representing its relative support in the model set.
 
 ```{r fig-dredge-PANAS-P, fig.height = 8, fig.cap = PANAS_P_dredge_pĺot$caption}
 PANAS_P_dredge_pĺot <- dredge.plot(dr_PANAS_P) # Run the function and store the result
@@ -1476,7 +1476,7 @@ tab_avg_PANAS_P$table
 
 This figure represents parameter estimates from the model-averaged coefficients.
 
-```{r fig-avg-PANAS-P, warning = FALSE, fig.height = 6, fig.width = 8, fig.cap = "Term estimates with 95% confidence intervals for the final model average of the best (AICc $\\Delta$ < 2) models predicting PANAS Positive Affect. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the veraged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
+```{r fig-avg-PANAS-P, warning = FALSE, fig.height = 6, fig.width = 8, fig.cap = "Term estimates with 95% confidence intervals for the final model average of the best (AICc $\\Delta$ < 2) models predicting PANAS Positive Affect. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the averaged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
 fig_avg_PANAS_P <- avg.mod.plot(avg_PANAS_P)
 fig_avg_PANAS_P
 ```
@@ -1519,7 +1519,7 @@ dr_PANAS_N <- dredge(
 
 #### Fig. \@ref(fig:fig-dredge-PANAS-N). Dredge results of the PANAS Negative Affect model
 
-The plot below visualizes the model selection results, displaying the top 100 models ranked by $AICc$. Each row represents an individual model, with blue cells indicating included predictors. The height of each row reflects the model’s Akaike weight ($w_i(AICc)$), representing its relative support in the model set.
+The plot below visualizes the model selection results, displaying the top 100 models ranked by $AICc$. Each row represents an individual model, with blue cells indicating included predictors. The height of each row reflects the model’s Akaike weight ($\omega$), representing its relative support in the model set.
 
 ```{r fig-dredge-PANAS-N, fig.height = 8, fig.cap = PANAS_N_dredge_pĺot$caption}
 PANAS_N_dredge_pĺot <- dredge.plot(dr_PANAS_N) # Run the function and store the result
@@ -1546,7 +1546,7 @@ tab_avg_PANAS_N$table
 
 This figure represents parameter estimates from the model-averaged coefficients.
 
-```{r fig-avg-PANAS-N, warning = FALSE, fig.height = 6, fig.width = 8, fig.cap = "Term estimates with 95% confidence intervals for the final model average of the best (AICc $\\Delta$ < 2) models predicting PANAS Negative Affect. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the veraged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
+```{r fig-avg-PANAS-N, warning = FALSE, fig.height = 6, fig.width = 8, fig.cap = "Term estimates with 95% confidence intervals for the final model average of the best (AICc $\\Delta$ < 2) models predicting PANAS Negative Affect. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the averaged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
 fig_avg_PANAS_N <- avg.mod.plot(avg_PANAS_N)
 fig_avg_PANAS_N
 ```
@@ -1576,13 +1576,17 @@ ggarrange(p_desc1 +
 
 ## Fig. \@ref(fig:fig-full-dredge). Distribution of participants' measured variables by gender
 
-```{r fig-full-dredge, warning = FALSE, fig.width = 10, fig.height = 7, fig.cap = "Model selection plot. \\textbf{(a)} Life Satisfaction; \\textbf{(b)} PANAS Positive Affect; \\textbf{(c)} PANAS Negative Affect. In all cases, each row represents one of the top 100 models (ranked by $AICc$) out of 32,768 fitted models. Purple cells indicate included terms, with row height corresponding to each model’s relative support based on its Akaike weight ($w_i(AICc)$). Numbers on the right identify the top models."}
+```{r fig-full-dredge, warning = FALSE, fig.width = 10, fig.height = 7, fig.cap = "Model selection plot. \\textbf{(a)} Life Satisfaction; \\textbf{(b)} PANAS Positive Affect; \\textbf{(c)} PANAS Negative Affect. In all cases, each row represents one of the top 100 candidate models (ranked by $AICc$) out of 32,768 fitted models. Purple cells indicate included terms, with row height corresponding to each model’s relative support based on its Akaike weight ($\\omega$). Numbers on the right identify the top models."}
 ggarrange(as.ggplot(image_read_pdf("PDF_plots/Life_Satisfaction.pdf")), 
           as.ggplot(image_read_pdf("PDF_plots/PANAS_Positive_Affect.pdf")),
           as.ggplot(image_read_pdf("PDF_plots/PANAS_Negative_Affect.pdf")),
           labels = "auto",
           ncol = 2,
           nrow = 2)
+
+bla <- ggplot() +
+  background_image(image_read_pdf("PDF_plots/Life_Satisfaction.pdf", density = 600)) +
+  theme(plot.margin = margin(t=0.2, l=1, r=0, b=0, unit = "cm"))
 ```
 
 ## Tab. \@ref(tab:tab-avg-mods). Term estimates for the three final averaged model
@@ -1596,7 +1600,7 @@ tab_avg_LS$coefficients |>
         booktabs = TRUE,
         linesep = "",
         align = c("l", rep("c", 12)),
-        caption = "Coefficient estimates for the the three final averaged models",
+        caption = "Coefficient estimates for the three final average models",
         col.names = c("Term", 
                       rep(c("$B$", "$95 \\% CIs$", "$z$", "$p$"), times = 3)),
         escape = FALSE
@@ -1630,7 +1634,7 @@ tab_avg_LS$coefficients |>
 
 This figure represents parameter estimates from the model-averaged coefficients.
 
-```{r fig-avg-mods, warning = FALSE, fig.height = 10, fig.width = 10, fig.cap = "Term estimates with 95% confidence intervals for the final model averages of the best (AICc $\\Delta$ < 2) models predicting  \\textbf{(a)} Life Satisfaction, \\textbf{(b)} PANAS Positive Affect, and \\textbf{(c)} PANAS Negative Affect. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the veraged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
+```{r fig-avg-mods, warning = FALSE, fig.height = 10, fig.width = 10, fig.cap = "Term estimates with 95% confidence intervals for the final model averages of the best (AICc $\\Delta$ < 2) models predicting  \\textbf{(a)} Life Satisfaction, \\textbf{(b)} PANAS Positive Affect, and \\textbf{(c)} PANAS Negative Affect. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the averaged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
 ggarrange(
   fig_avg_LS +
     labs(subtitle = "Life Satistaction") +
@@ -1655,7 +1659,7 @@ ggarrange(
 ```{r results = "hold"}
 # Display session information for reproducibility
 # - Uses `pander()` for better formatting
-# - `locale = FALSE` to exclude locale-specific info (reduces clutter)
+# - `locale = FALSE` to exclude locale-specific info
 library(pander)
 pander(sessionInfo(), locale = FALSE)
 ```
