@@ -1167,7 +1167,7 @@ p_desc1 <- data |>
   labs(x = NULL, y = "Percentage") +
   theme_minimal() +
   theme(legend.position = "bottom",
-        axis.text.x = element_text(angle = 45, hjust = 1))
+        axis.text.x = element_text(angle = 52, hjust = 1))
 p_desc1
 ```
 
