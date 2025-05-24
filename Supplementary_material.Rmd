@@ -2,16 +2,27 @@
 title: "Mental health and subjective well-being of trans and non-binary population in Colombia"
 subtitle: "Supplementary Material: Code and analyses"
 author:
-  - name: Maria Fernanda Reyes-Rodríguez \orcidlink{0000-0002-2645-5092}
+  - name: María Fernanda Reyes \orcidlink{0000-0002-2645-5092}
     correspondence: true
     institute: andes
     email: m.reyes8@uniandes.edu.co
+  - name: Natalie Levy \orcidlink{0000-0002-3894-7676}
+    correspondence: false
+    institute: andes
+  - name: Daniela Maldonado Salamanca
+    correspondence: false
+    institute: red
+  - name: Minna Lyons \orcidlink{0000-0002-9553-9767}
+    correspondence: false
+    institute: ljmu
   - name: Juan David Leongómez \orcidlink{0000-0002-0092-6298}
     correspondence: false
     institute: codec
 
 institute:
   - andes: "Department of Psychology, University of Los Andes, Bogota 111211, Colombia"
+  - red: "Red Comuntaria Trans, Calle 23 # 18B-05, Bogotá 111411, Colombia"
+  - ljmu: "School of Psychology, Liverpool John Moores University, Liverpool L33AF, UK"
   - codec: "CODEC: Cognitive and Behavioural Sciences, Faculty of Psychology, Universidad El Bosque, Bogotá 110121, Colombia."
 
 date: "`r if (.Platform$OS.type == 'windows') { Sys.setlocale('LC_TIME','English_United Kingdom') } else { Sys.setlocale('LC_TIME','en_GB.utf8') }; format(Sys.Date(), '%d %B %Y')`"
@@ -45,7 +56,7 @@ header-includes:
   \usepackage{fancyhdr}
   \pagestyle{fancy} 
   \usepackage{hanging}
-  \lhead{Reyes-Rodríguez et al.} 
+  \lhead{Reyes et al.} 
   \rhead{Supplementary Material - \textit{Trans and non-binary mental health in Colombia}}
   \renewcommand{\abstractname}{Description} 
   \usepackage[british]{babel}
@@ -103,11 +114,11 @@ This document contains all code, and step by step explanations for all analyses,
 
 ```{=latex}
 \begin{hangparas}{.25in}{1}
-Reyes-Rodríguez, M. F., Levy, N., \colorbox{pink}{Maldonado, D.}, Lyons, M., \&  Leongómez, J. D. (in prep). \textit{Mental health and subjective well-being of trans and non-binary population in Colombia}
+Reyes, M. F., Levy, N., Maldonado Salamanca, D., Lyons, M., \&  Leongómez, J. D. (in prep). \textit{Mental health and subjective well-being of trans and non-binary population in Colombia}
 \end{hangparas}
 ```
 
-Data are available on the Open Science Framework (OSF): \colorbox{pink}{https://doi.org/10.XXXXX/OSF.IO/XXXXX}. The analyses were designed by Juan David Leongómez and Maria Fernanda Reyes-Rodríguez. This document and all its underlying code were created in R Markdown by Juan David Leongómez using R and \LaTeX.
+Data are available on the Open Science Framework (OSF): https://doi.org/10.17605/OSF.IO/HJ7VB. The analyses were designed by Juan David Leongómez and María Fernanda Reyes and performed by Juan David Leongómez. This document and all its underlying code were created in R Markdown by Juan David Leongómez using R and \LaTeX.
 
 ------------------------------------------------------------------------
 
@@ -376,7 +387,8 @@ avg.mod.plot <- function(avg_mod) {
       confint(avg_mod, full = TRUE) |> as_tibble(), # Add confidence intervals
       summary(avg_mod)$coef.nmod |>
         as_tibble() |>
-        pivot_longer(cols = everything(), names_to = "model", values_to = "value") # Gather number of models per term
+        # Gather number of models per term
+        pivot_longer(cols = everything(), names_to = "model", values_to = "value")
     ) |>
     mutate(
       avmod = deparse(substitute(avg_mod)) |>
@@ -610,12 +622,12 @@ tibble(
 
 ## Renaming, recoding, and filtering
 
-This section prepares the raw dataset (`data_RAW`) and creates a dataset (`data`) for analysis by:
+This section contains the code to load the raw dataset (`data_RAW`) and create a final dataset (`data`) for analysis. Steps include:
 
 * Renaming variables to meaningful labels
 * Handling missing values (99 → NA)
 * Recoding categorical variables into more readable labels
-* Estimate participant scores for item-based scales (Self-efficacy, Life Satisfaction, Resilience, Depression, Social Support, Positive Affect, Negative Affect, Community Cohesion)
+* Estimating participant scores for item-based scales (Self-efficacy, Life Satisfaction, Resilience, Depression, Social Support, Positive Affect, Negative Affect, Community Cohesion)
 * Filtering out ineligible cases (e.g., participants under 18)
 
 To estimate participant scores for item-based scales (i.e., Self-efficacy, Life Satisfaction, Resilience, Depression, Social Support, Positive Affect, Negative Affect, and Community Cohesion), and to minimise missing data in multi-model inference procedures, we computed scores in accordance with recommended practices [see @grahamMissingData2012], using Cronbach’s alpha levels to guide acceptable thresholds for missing data. For scales with Cronbach’s alpha values $\geq$ 0.90 (e.g., Self-efficacy and Social Support), scores were calculated when at least 50% of the items had been completed. For scales with alpha values $\geq$ 0.80 < 0.90 (e.g., Life Satisfaction, Resilience, and PANAS), up to 20% of items could be missing. For scales with alpha values $\geq$ 0.70 and < 0.80 (e.g., Depression and Community Cohesion), scores were calculated only when participants had one or no missing item. Scores of participants who did not meet these criteria for a given scale were treated as missing data (i.e., their scale score was set to NA).
@@ -1226,7 +1238,7 @@ p_desc2
 ```{r tab-corrs}
 # Compute correlations for all participants combined
 dat.corr.ALL <- data |>
-  select(Age, Polyconsumption_Month:Community_Cohesion, -Discrimination) |> # Select numeric variables
+  select(Age, Polyconsumption_Month:Community_Cohesion, -Discrimination) |> # Numeric variables
   corr.stars() |>
   tail(-1) |>
   rownames_to_column(var = " ")
