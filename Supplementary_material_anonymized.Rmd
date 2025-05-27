@@ -1,0 +1,1689 @@
+---
+title: "Mental health and subjective well-being of trans and non-binary population in Colombia"
+subtitle: "Supplementary Material: Code and analyses"
+author:
+  - name: "[masked for peer review]"
+    correspondence: true
+    institute: andes
+    email: "[masked for peer review]"
+  - name: "[masked for peer review]"
+    correspondence: false
+    institute: andes
+  - name: "[masked for peer review]"
+    correspondence: false
+    institute: red
+  - name: "[masked for peer review]"
+    correspondence: false
+    institute: ljmu
+  - name: "[masked for peer review]"
+    correspondence: false
+    institute: codec
+
+institute:
+  - andes: "[masked for peer review]"
+  - red: "[masked for peer review]"
+  - ljmu: "[masked for peer review]"
+  - codec: "[masked for peer review]"
+
+date: "`r if (.Platform$OS.type == 'windows') { Sys.setlocale('LC_TIME','English_United Kingdom') } else { Sys.setlocale('LC_TIME','en_GB.utf8') }; format(Sys.Date(), '%d %B %Y')`"
+
+output:
+  bookdown::pdf_document2:
+    citation_package: biblatex
+    highlight: zenburn
+    number_sections: yes
+    keep_tex:  false
+    toc: no
+    pandoc_args:
+      - '--lua-filter=lua/scholarly-metadata.lua'
+      - '--lua-filter=lua/author-info-blocks.lua'
+
+classoption: 
+      - bookmarksnumbered
+
+editor_options:
+  chunk_output_type: console
+
+geometry: margin=2cm
+
+header-includes: 
+  \usepackage{caption} 
+  \captionsetup[figure]{position=above}
+  \setlength{\headheight}{15pt}
+  \usepackage{float} 
+  \floatplacement{figure}{H} 
+  \usepackage[utf8]{inputenc} 
+  \usepackage{fancyhdr}
+  \pagestyle{fancy} 
+  \usepackage{hanging}
+  \lhead{[masked for peer review] et al.} 
+  \rhead{Supplementary Material - \textit{Trans and non-binary mental health in Colombia}}
+  \renewcommand{\abstractname}{Description} 
+  \usepackage[british]{babel}
+  \usepackage{csquotes}
+  \usepackage[style=apa,backend=biber]{biblatex}
+  \DeclareLanguageMapping{british}{british-apa}
+  \usepackage{hanging}
+  \usepackage{amsthm,amssymb,amsfonts}
+  \usepackage{tikz,lipsum,lmodern}
+  \usepackage{multicol}
+  \usepackage{orcidlink}
+  \newcommand{\opensupplement}{\setcounter{table}{0}
+    \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0}
+    \renewcommand{\thefigure}{S\arabic{figure}}}
+  \newcommand{\closesupplement}{\setcounter{table}{0}
+    \renewcommand{\thetable}{\arabic{table}} \setcounter{figure}{0}
+    \renewcommand{\thefigure}{\arabic{figure}}}
+  \usepackage{multirow,booktabs,setspace}
+  \DeclareCaptionLabelSeparator{point}{. }
+  \DeclareCaptionLabelSeparator{point}{. }
+  \captionsetup[table]{labelfont=bf,
+    textfont=it,
+    format=plain,
+    labelsep=point,
+    skip=5pt}
+  \captionsetup[figure]{labelfont=bf,
+    format=plain,
+    justification=justified,
+    singlelinecheck=false,
+    labelsep=point,
+    skip=5pt}
+
+always_allow_html: yes
+bibliography: bib/Bibliography.bib
+urlcolor: blue
+linkcolor: gray
+citecolor: gray
+link-citations: true
+---
+
+------------------------------------------------------------------------
+
+```{=tex}
+\begin{center}
+\textbf{Description}
+\end{center}
+
+\par
+\begingroup
+\leftskip3em
+\rightskip\leftskip
+```
+
+This document contains all code, and step by step explanations for all analyses, figures and tables (including supplementary figures and tables) for:
+
+```{=latex}
+\begin{hangparas}{.25in}{1}
+[masked for peer review] (in prep). \textit{Mental health and subjective well-being of trans and non-binary population in Colombia}
+\end{hangparas}
+```
+
+Data are available on the Open Science Framework (OSF): https://osf.io/n2ucs/?view_only=5e734d6f8ecc4bfca278b61cb98f5cb9. The analyses were designed by [masked for peer review] and [masked for peer review] and performed by [masked for peer review]. This document and all its underlying code were created in R Markdown by [masked for peer review] using R and \LaTeX.
+
+------------------------------------------------------------------------
+
+```{=latex}
+\par
+\endgroup
+
+{\hypersetup{hidelinks}
+\setcounter{tocdepth}{6}
+\tableofcontents
+}
+\opensupplement
+```
+
+```{r results = "hold", setup, include = FALSE}
+library(knitr)
+opts_chunk$set(fig.width = 12, fig.height = 6, fig.pos = "H")
+options(knitr.kable.NA = " ")
+opts_knit$set(eval.after = "fig.cap")
+```
+
+------------------------------------------------------------------------
+
+# Preliminaries
+
+## Load packages
+
+This file was created using `knitr` [@knitrcit], mostly using `tidyverse` [@tidyversecit] syntax. As such, data wrangling was mainly done using packages such as `dplyr` [@dplyrcit], and most figures were created or modified using `ggplot2` [@ggplotcit]. Tables were created using `knitr::kable` and `kableExtra` [@kableExtracit].
+
+Multi-model inference and model averaging was achieved using `MuMIn` [@MuMIncit], and model assumptions were performed using `performance` [@ludecke2021].
+
+All packages used in this file can be directly installed from the Comprehensive R Archive Network ([CRAN](https://cran.r-project.org/)). For a complete list of packages used to create this file, and their versions, see section \@ref(session), at the end of the document.
+
+```{r message = FALSE}
+library(ltm)
+library(psych) # For statistical functions (e.g., Cronbach's alpha)
+library(MuMIn) # For model selection and averaging
+library(performance) # For model performance metrics
+library(readr) # For reading data files
+library(scales) # For percent formatting
+library(knitr)
+library(kableExtra)
+library(car)
+library(tidyverse) # For data manipulation and piping
+library(ggpubr)
+library(gtsummary)
+library(Hmisc)
+library(magick)
+library(ggplotify)
+library(pdftools)
+```
+
+## Custom functions
+
+### `pval.lev` and `pval.stars`
+
+These functions take p-values and formats them, either in \LaTeX and highlighting significant p-values in bold and representing all in an appropriate level, or as stars.
+
+```{r}
+# Function to format p-values for LaTeX output, highlighting significant values in bold
+pval.lev <- function(pvals) {
+  ifelse(pvals < 0.0001, "\\textbf{< 0.0001}", # Highlight very small p-values
+    ifelse(pvals < 0.001, "\\textbf{< 0.001}", # Bold p-values < 0.001
+      ifelse(pvals < 0.05, paste0("\\textbf{", round(pvals, 4), "}"), # Bold p-values < 0.05
+        round(pvals, 2) # Round non-significant values to two decimal places
+      )
+    )
+  )
+}
+
+# Function to add significance stars based on p-value thresholds
+pval.stars <- function(pvals) {
+  ifelse(pvals < 0.0001, "****", # Four stars for p < 0.0001
+    ifelse(pvals < 0.001, "***", # Three stars for p < 0.001
+      ifelse(pvals < 0.01, "**", # Two stars for p < 0.01
+        ifelse(pvals < 0.05, "*", NA) # One star for p < 0.05, NA otherwise
+      )
+    )
+  )
+}
+```
+
+### `corr.stars`
+
+This function creates a correlation matrix, and displays significance (function `corr.stars` modified from <http://myowelt.blogspot.com/2008/04/beautiful-correlation-tables-in-r.html>).
+
+```{r}
+# Function to create a correlation matrix with significance levels in LaTeX format
+corr.stars <- function(x) {
+  require(Hmisc) # Load Hmisc package for correlation and p-value calculations
+  x <- as.matrix(x) # Ensure input is a matrix
+  R <- rcorr(x, type = "spearman")$r # Compute correlation coefficients
+  p <- rcorr(x, type = "spearman")$P # Extract p-values for significance testing
+  # Define symbols for significance levels, using LaTeX formatting for bold and stars
+  mystars <- ifelse(p < .001, paste0("\\textbf{", round(R, 2), "***}"), # p < 0.001
+    ifelse(p < .01, paste0("\\textbf{", round(R, 2), "**}"), # p < 0.01
+      ifelse(p < .05, paste0("\\textbf{", round(R, 2), "*}"), # p < 0.05
+        ifelse(p < .10, paste0(round(R, 2), "$^{\\dagger}$"), # p < 0.10 (trend level)
+          format(round(R, 2), nsmall = 2) # Format non-significant values with two decimals
+        )
+      )
+    )
+  )
+  # Construct a new matrix with correlation values and significance symbols
+  Rnew <- matrix(mystars, ncol = ncol(x))
+  # Ensure diagonal values remain the original correlation values (without significance symbols)
+  diag(Rnew) <- paste(diag(R), " ", sep = "")
+  # Assign row and column names for the formatted matrix
+  rownames(Rnew) <- colnames(x)
+  colnames(Rnew) <- paste(colnames(x), "", sep = "")
+  # Remove the upper triangle of the matrix (including the diagonal) for a clean presentation
+  Rnew <- as.matrix(Rnew)
+  Rnew[upper.tri(Rnew, diag = TRUE)] <- ""
+  # Convert to a data frame for better handling and remove the last empty column
+  Rnew <- as.data.frame(Rnew)
+  Rnew <- cbind(Rnew[1:length(Rnew) - 1])
+  return(Rnew) # Return formatted correlation table
+}
+```
+
+### `dredge.plot`
+
+This function generates a model selection plot from a `MuMIn::dredge()` model selection table. It visualizes the top 100 candidate  models, showing which terms are included in each model and their relative importance based on Akaike weights. The function also dynamically creates a caption summarizing the number of fitted models, suitable for use as a LaTeX or R Markdown fig.cap. Additionally, it saves the plot as a PDF file in a PDF_plots/ subdirectory (relative to the project root), with the filename based on the input object’s name
+
+```{r}
+dredge.plot <- function(mod.sel.table) {
+  # Ensure the input is a dredge object
+  if (!inherits(mod.sel.table, "model.selection")) {
+    stop("Input must be a MuMIn::dredge() model selection table.")
+  }
+  # Extract the first model call from the dredge object
+  model_call <- attr(mod.sel.table, "model.calls")[[1]]
+  # Extract the response variable from the formula
+  response_var <- all.vars(model_call$formula)[1]
+  # Apply replacement logic
+  response_label <- gsub("_", " ", response_var)
+  # Create output directory if it doesn't exist
+  dir.create("PDF_plots", showWarnings = FALSE)
+  # Define output file path
+  file_path <- file.path("PDF_plots", paste0(response_var, ".pdf"))
+  # Save the plot to PDF
+  pdf(file_path, width = 8, height = 6)
+  plot_object <- plot(mod.sel.table[1:100, ], col = "#A92395FF",
+                      main = NULL)
+  dev.off()
+  # Display the plot in the active graphics device (console/Rmd)
+  plot(mod.sel.table[1:100, ], col = "#A92395FF", 
+       main = NULL, par.vlab = NULL)
+  # Generate the caption
+  caption <- paste0(
+    "Model selection plot. Each row represents one of the top 100 models ",
+    "(ranked by $AICc$) out of ", formatC(nrow(mod.sel.table), big.mark = ","),
+    " fitted models. Purple cells indicate included terms, with row height corresponding",
+    " to each model’s relative support based on its Akaike weight ($\\\\omega$)"
+  )
+  # Return both the plot object and the caption
+  return(list(plot = plot_object, caption = caption))
+}
+```
+
+### `avg.mod.summary`
+
+This function creates a formatted summary table for model-averaged coefficients obtained from `MuMIn::model.avg()`. It includes coefficient estimates and 95% confidence intervals, significance levels (formatted for LaTeX output), a dynamically generated caption including the dependent variable name, and a footnote specifying reference levels for categorical predictors.
+
+```{r}
+avg.mod.summary <- function(avg_model, data) {
+  # Function to extract relevant reference levels
+  extract_relevant_reference_levels <- function(avg_model, data) {
+    # Identify factor variables in the dataset
+    factor_vars <- names(data)[sapply(data, is.factor)]
+    # Get reference levels for each factor variable
+    ref_levels <- sapply(factor_vars, function(var) levels(data[[var]])[1])
+    # Extract model terms
+    model_terms <- rownames(summary(avg_model)$coefmat.full)
+    # Detect which model terms correspond to factor variables
+    relevant_factors <-
+      factor_vars[sapply(factor_vars, 
+                         function(var) any(grepl(paste0("^", var), model_terms)))]
+    # Keep only reference levels for relevant factors
+    relevant_refs <- ref_levels[names(ref_levels) %in% relevant_factors]
+    # Format the output
+    if (length(relevant_refs) > 0) {
+      paste0(
+        "Reference levels: ",
+        paste0(names(relevant_refs),
+               " = ", relevant_refs,
+               collapse = "; "
+        )
+      )
+    } else {
+      "No factor variables in the average model"
+    }
+  }
+  
+  # Compute CIs
+  cis <- confint(avg_model, full = TRUE) |>
+    as.data.frame() |>
+    mutate(across(everything(), round, 3)) |>
+    unite(col = "CI", `2.5 %`:`97.5 %`, sep = " — ")
+  
+  # Full average summary table
+  summ_table <- summary(avg_model)$coefmat.full |>
+    as.data.frame() |>
+    bind_cols(cis) |>
+    rownames_to_column(var = "term") |>
+    mutate(term = term |>
+             str_replace_all("Gender", "Gender: ") |>
+             str_replace_all("Housing", "Housing: ") |>
+             str_replace_all("Ethnicity", "Ethnicity: ") |>
+             str_replace_all("Education", "Education: ") |>
+             str_replace_all("Discrimination", "Discrimination: ") |>
+             str_replace_all("Self_efficacy", "Self-efficacy") |>
+             str_replace_all("_", " ")) |>
+    select(term, Estimate, CI, `z value`, `Pr(>|z|)`) |>
+    mutate(`Pr(>|z|)` = pval.lev(`Pr(>|z|)`)) |> 
+    arrange(term)
+  
+  kable_tab <- kable(
+    summ_table,
+    digits = 3,
+    booktabs = TRUE,
+    linesep = "",
+    align = c("l", rep("c", 4)),
+    caption = paste0(
+      "Coefficient estimates for the ",
+      as.character(avg_model$formula)[2] |>
+        str_replace_all("_", " "),
+      " model."
+    ),
+    col.names = c("Term", "$B$", "$95 \\% CIs$", "$z$", "$p$"),
+    escape = FALSE
+  ) |>
+    kable_styling(latex_options = "HOLD_position") |>
+    footnote(
+      general = paste0(
+        "This table includes estimates based on a full model average. ",
+        "The full model average ensures that all variables are included in every model, ",
+        "with coefficients set to zero when absent. As a consequence, it acts as a shrinkage ",
+        "estimator, making estimates more conservative. ",
+        "$B$ represents unstandardized model coefficients. ",
+        extract_relevant_reference_levels(avg_model, data), # Now using the internal function
+        ". Significant effects are in bold."
+      ),
+      threeparttable = TRUE,
+      footnote_as_chunk = TRUE,
+      escape = FALSE
+    )
+  
+  # Return all intermediate objects
+  return(list(table = kable_tab, 
+              coefficients = summ_table,
+              reference_levels = extract_relevant_reference_levels(avg_model, data)))
+}
+```
+
+### `avg.mod.plot`
+
+This function visualizes model-averaged estimates from `MuMIn::model.avg()`, displaying point estimates with 95% confidence intervals, predictor importance (mapped to point size and colour), and a dynamically generated annotation for the number of averaged model.
+
+```{r}
+avg.mod.plot <- function(avg_mod) {
+  # Extract model summary and transform into a tidy format
+  x <- summary(avg_mod)$coefmat.full |>
+    as_tibble(rownames = "key") |> # Convert row names to a "key" column
+    bind_cols(
+      confint(avg_mod, full = TRUE) |> as_tibble(), # Add confidence intervals
+      summary(avg_mod)$coef.nmod |>
+        as_tibble() |>
+        # Gather number of models per term
+        pivot_longer(cols = everything(), names_to = "model", values_to = "value")
+    ) |>
+    mutate(
+      avmod = deparse(substitute(avg_mod)) |>
+        factor(), # Store model name as a factor
+      value = value / max(value, na.rm = TRUE), # Normalize 'value' column
+      sig = pval.stars(`Pr(>|z|)`) |>
+        str_replace("\\.", "†"), # Convert p-values into significance stars
+      key = key |>
+        str_replace_all("Gender", "Gender: ") |>
+        str_replace_all("Housing", "Housing: ") |>
+        str_replace_all("Ethnicity", "Ethnicity: ") |>
+        str_replace_all("Education", "Education: ") |>
+        str_replace_all("Discrimination", "Discrimination: ") |>
+        str_replace_all("Self_efficacy", "Self-efficacy") |>
+        str_replace_all("_", " ")
+    )
+  
+  x <- x |>
+    mutate(key = factor(key, levels = as.character(unique(x$key))))
+  
+  # Get the number of averaged models
+  nMods <- dim(avg_mod$msTable)[1]
+  
+  # Create the plot
+  ggplot(x, aes(x = key, y = Estimate)) +
+    # Add horizontal reference line at zero
+    geom_hline(yintercept = 0, color = "grey") +
+    # Add points sized and colored by importance
+    geom_point(aes(size = value, color = value), alpha = 0.7) +
+    # Add error bars (confidence intervals)
+    geom_errorbar(aes(ymin = `2.5 %`, ymax = `97.5 %`),
+                  colour = "black", width = 0.1
+    ) +
+    # Add additional points for emphasis
+    geom_point(size = 1) +
+    # Apply theme and labels
+    theme_bw() +
+    labs(x = NULL, y = "Estimate") +
+    theme(axis.text.x = element_text(angle = 60, hjust = 1)) +
+    # Scale for importance (value) size
+    scale_size_continuous(
+      range = c(2, 8),
+      breaks = seq(0, 1, by = 0.2)
+    ) +
+    # Legends for size and color
+    guides(
+      size = guide_legend(title = "Importance"),
+      color = guide_legend(title = "Importance")
+    ) +
+    # Ensure x-axis labels remain in the correct order
+    scale_x_discrete(
+      labels = levels(x$key),
+      expand = c(0, 0.5)
+    ) +
+    # Use plasma color scale, reversed so darker colors represent higher values
+    scale_colour_viridis_c(
+      option = "plasma", direction = -1,
+      breaks = seq(0, 1, by = 0.2)
+    ) +
+    # Add significance labels next to points
+    geom_text(aes(label = sig), y = x$`97.5 %`, vjust = -0.4) +
+    # Add annotation indicating the number of averaged models
+    annotate(
+      "text",
+      x = Inf, y = Inf,
+      label = paste("Models averaged = ", nMods),
+      hjust = 1.1, vjust = 1.8,
+      size = 4,
+      fontface = "bold.italic"
+    )
+}
+```
+
+## Load data
+
+Load raw CSV data
+
+```{r message = FALSE}
+data_RAW <- read_csv("data/data.csv")
+```
+
+### Define PANAS Subscales (Positive & Negative Affect)
+
+The Positive and Negative Affect Schedule (PANAS) is a widely used self-report questionnaire that measures two independent dimensions of affect:
+
+* Positive Affect (PA): Reflects the extent to which a person feels enthusiastic, active, and alert.
+* Negative Affect (NA): Represents distress and unpleasurable engagement, including emotions such as fear, anger, and nervousness.
+
+The following lists define the PANAS subscales based on their respective items.
+
+```{r message = FALSE}
+# List of PANAS Positive Affect (PANAS_P) items
+PANAS_P <- c(
+  "PANASB_1", "PANASB_3", "PANASB_5", "PANASB_9",
+  "PANASB_10", "PANASB_12", "PANASB_14", "PANASB_16",
+  "PANASB_17", "PANASB_19"
+)
+
+# List of PANAS Negative Affect (PANAS_N) items
+PANAS_N <- c(
+  "PANASB_2", "PANASB_4", "PANASB_6", "PANASB_7",
+  "PANASB_8", "PANASB_11", "PANASB_13", "PANASB_15",
+  "PANASB_18", "PANASB_20"
+)
+```
+
+## Internal consistency
+
+### Calculate Cronbach's Alpha for Different Scales
+
+To measure the internal consistency of these tests, we used standardized Cronbach's alpha ($\alpha$ or Tau-equivalent reliability: $\rho_{T}$) coefficients, using the function `cronbach.alpha` from the package `ltm` [@lmtcit].
+
+```{r cronbach-alpha, message = FALSE, warning = FALSE}
+# Compute Cronbach's alpha for the Self-efficacy (EAG) scale
+alpha_EAG <- data_RAW |>
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |> # Replace 99 with NA (missing values)
+  select(starts_with("EAG_")) |> # Select all columns starting with "EAG_"
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE) # Compute Cronbach’s alpha
+
+# Compute Cronbach's alpha for the Life Satisfaction (SWLS) scale
+alpha_SWLS <- data_RAW |>
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |> # Replace 99 with NA
+  select(starts_with("SWLS_")) |> # Select all columns starting with "SWLS_"
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for the Resilience (EBR) scale
+alpha_EBR <- data_RAW |>
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |> # Replace 99 with NA
+  select(starts_with("EBR_")) |> # Select all columns starting with "EBR_"
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for the Depression (EBD) scale (after recoding responses)
+alpha_EBD <- data_RAW |>
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |> # Replace 99 with NA
+  select(starts_with("EBD_")) |> # Select all columns starting with "EBD_"
+  mutate(across(everything(), ~ ifelse(is.na(.x), NA, .x - 1))) |> # Adjust values
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for the Social Support (MOS2) scale
+alpha_MOS2 <- data_RAW |>
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |> # Replace 99 with NA
+  select(starts_with("MOS2_")) |> # Select all columns starting with "MOS2_"
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for PANAS Positive Affect (PANAS_P)
+alpha_PANAS_P <- data_RAW |>
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |> # Replace 99 with NA
+  select(all_of(PANAS_P)) |> # Select PANAS_P variables
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for PANAS Negative Affect (PANAS_N)
+alpha_PANAS_N <- data_RAW |>
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |> # Replace 99 with NA
+  select(all_of(PANAS_N)) |> # Select PANAS_N variables
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+
+# Compute Cronbach's alpha for Community Cohesion (PCPS3) scale
+alpha_PCPS3 <- data_RAW |>
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |> # Replace 99 with NA
+  select(starts_with("PCPS3_")) |> # Select all columns starting with "PCPS3_"
+  drop_na() |>
+  cronbach.alpha(CI = TRUE, standardized = TRUE)
+```
+
+### Table \@ref(tab:tab-cronbach-alpha). Internal consistency of measured scales
+
+The internal consistency of the measured scales was generally strong, with Cronbach’s $\alpha$ values ranging from `r round(min(alpha_EAG$alpha, alpha_SWLS$alpha, alpha_EBR$alpha, alpha_EBD$alpha, alpha_MOS2$alpha, alpha_PANAS_P$alpha, alpha_PANAS_N$alpha, alpha_PCPS3$alpha), 3)` to `r round(max(alpha_EAG$alpha, alpha_SWLS$alpha, alpha_EBR$alpha, alpha_EBD$alpha, alpha_MOS2$alpha, alpha_PANAS_P$alpha, alpha_PANAS_N$alpha, alpha_PCPS3$alpha), 3)`. In particular, the Social Support (MOS2) and Self-efficacy (EAG) scales exhibited excellent internal consistency, while the Depression (EBD) and Community Cohesion (PCPS3) scales had acceptable reliability, suggesting a slightly lower but still adequate level of internal consistency.
+
+```{r tab-cronbach-alpha, message = FALSE, warning = FALSE}
+tibble(
+  Scale = c(
+    "Self-efficacy$^1$",
+    "Life Satisfaction$^2$",
+    "Resilience$^3$",
+    "Depression$^4$",
+    "Social Support$^5$",
+    "PANAS Positive$^6$",
+    "PANAS Negative$^6$",
+    "Community Cohesion$^7$"
+  ),
+  p = c(
+    alpha_EAG$p, alpha_SWLS$p, alpha_EBR$p, alpha_EBD$p, alpha_MOS2$p,
+    alpha_PANAS_P$p, alpha_PANAS_N$p, alpha_PCPS3$p
+  ),
+  n = c(
+    alpha_EAG$n, alpha_SWLS$n, alpha_EBR$n, alpha_EBD$n, alpha_MOS2$n,
+    alpha_PANAS_P$n, alpha_PANAS_N$n, alpha_PCPS3$n
+  ),
+  alpha = c(
+    alpha_EAG$alpha, alpha_SWLS$alpha, alpha_EBR$alpha, alpha_EBD$alpha,
+    alpha_MOS2$alpha, alpha_PANAS_P$alpha, alpha_PANAS_N$alpha, alpha_PCPS3$alpha
+  ),
+  ci2.5 = c(
+    alpha_EAG$ci[1], alpha_SWLS$ci[1], alpha_EBR$ci[1], alpha_EBD$ci[1],
+    alpha_MOS2$ci[1], alpha_PANAS_P$ci[1], alpha_PANAS_N$ci[1], alpha_PCPS3$ci[1]
+  ),
+  ci97.5 = c(
+    alpha_EAG$ci[2], alpha_SWLS$ci[2], alpha_EBR$ci[2], alpha_EBD$ci[2],
+    alpha_MOS2$ci[2], alpha_PANAS_P$ci[2], alpha_PANAS_N$ci[2], alpha_PCPS3$ci[2]
+  )
+) |>
+  mutate(across(starts_with("ci"), round, 3)) |>
+  unite(col = "CI", ci2.5:ci97.5, sep = " — ") |>
+  kable(
+    digits = 3,
+    booktabs = TRUE,
+    linesep = "",
+    align = c("l", rep("c", 4)),
+    caption = "Internal consistency of measured scales",
+    col.names = c("Variable", "Items", "$n$", "$\\alpha$", "$95\\% CI$"),
+    escape = FALSE
+  ) |>
+  kable_styling(latex_options = "HOLD_position") |>
+  footnote(
+    general = "95\\\\% confidence intervals were calculated with 1,000 bootstrap samples.
+           Standardized Cronbach's alpha ($\\\\alpha$) coefficients were computed.
+           $^1$\\\\cite{EAG}; $^2$\\\\cite{SWLS}; $^3$\\\\cite{EBR}; $^4$\\\\cite{EBD};
+           $^5$\\\\cite{MOS}; $^6$\\\\cite{PANAS}; $^7$\\\\cite{PCPS3}.",
+    threeparttable = TRUE, footnote_as_chunk = TRUE, escape = FALSE
+  )
+```
+
+# Data Preprocessing
+
+## Renaming, recoding, and filtering
+
+This section contains the code to load the raw dataset (`data_RAW`) and create a final dataset (`data`) for analysis. Steps include:
+
+* Renaming variables to meaningful labels
+* Handling missing values (99 → NA)
+* Recoding categorical variables into more readable labels
+* Estimating participant scores for item-based scales (Self-efficacy, Life Satisfaction, Resilience, Depression, Social Support, Positive Affect, Negative Affect, Community Cohesion)
+* Filtering out ineligible cases (e.g., participants under 18)
+
+To estimate participant scores for item-based scales (i.e., Self-efficacy, Life Satisfaction, Resilience, Depression, Social Support, Positive Affect, Negative Affect, and Community Cohesion), and to minimise missing data in multi-model inference procedures, we computed scores in accordance with recommended practices [see @grahamMissingData2012], using Cronbach’s alpha levels to guide acceptable thresholds for missing data. For scales with Cronbach’s alpha values $\geq$ 0.90 (e.g., Self-efficacy and Social Support), scores were calculated when at least 50% of the items had been completed. For scales with alpha values $\geq$ 0.80 < 0.90 (e.g., Life Satisfaction, Resilience, and PANAS), up to 20% of items could be missing. For scales with alpha values $\geq$ 0.70 and < 0.80 (e.g., Depression and Community Cohesion), scores were calculated only when participants had one or no missing item. Scores of participants who did not meet these criteria for a given scale were treated as missing data (i.e., their scale score was set to NA).
+
+This procedure implies that the number of items used to compute scale scores may vary across participants. To account for this, all scale scores were calculated as the mean of available items, even for scales that are typically computed as a sum: Self-efficacy, Life Satisfaction, Resilience, Depression, and Social Support. For these scales, however, an alternative, more traditional sum score was also computed for participants with complete item responses, and this version was used to report more readable descriptive statistics in Table \@ref(tab:tab-desc-scores).
+
+```{r message = FALSE}
+data <- data_RAW |>
+  # Rename columns to meaningful names
+  rename(
+    Age = SD1,
+    City = SD2,
+    Gender = SD3,
+    Sexualientation = SD4,
+    Sex = SD5,
+    Ethnicity = SD6,
+    Farmer = SD7,
+    Marital_Status = SD8,
+    SES = SD9, # Socioeconomic Status
+    Education = SD10,
+    Children = SD11,
+    Housing = SD12,
+    Cohabitant = SD13,
+    Monthly_Income = SD14,
+    Income_Source = SD15,
+    Employment = SD16,
+    Job = SD17,
+    # Disabilities and difficulties
+    Hearing_Difficulties = SD18_1,
+    Speaking_Difficulties = SD18_2,
+    Seeing_Difficulties = SD18_3,
+    Moving_Difficulties = SD18_4,
+    Grabing_Difficulties = SD18_5,
+    Understanding_Difficulties = SD18_6,
+    Interacting_Difficulties = SD18_7,
+    # Lifetime Prevalence (LP) of substance use
+    LP_Alcohol = SD19_1_A,
+    LP_Cigarette = SD19_2_A,
+    LP_Cannabis = SD19_3_A,
+    LP_Cocaine = SD19_4_A,
+    LP_Basuco = SD19_5_A,
+    LP_Inhalant = SD19_6_A,
+    LP_Ecstasy = SD19_7_A,
+    LP_Psilocybin = SD19_8_A,
+    LP_LSD = SD19_9_A,
+    LP_Tranquilizer = SD19_10_A,
+    LP_Popper = SD19_11_A,
+    LP_Anfetamines = SD19_12_A,
+    LP_Heroine = SD19_13_A,
+    # Last Month (LM) substance use
+    LM_Alcohol = SD19_1_B,
+    LM_Cigarette = SD19_2_B,
+    LM_Cannabis = SD19_3_B,
+    LM_Cocaine = SD19_4_B,
+    LM_Basuco = SD19_5_B,
+    LM_Inhalant = SD19_6_B,
+    LM_Ecstasy = SD19_7_B,
+    LM_Psilocybin = SD19_8_B,
+    LM_LSD = SD19_9_B,
+    LM_TRAN = SD19_10_B,
+    LM_Popper = SD19_11_B,
+    LM_Anfetamines = SD19_12_B,
+    LM_Heroine = SD19_13_B,
+    # Last Week (LW) substance use
+    LW_Alcohol = SD19_1_C,
+    LW_Cigarette = SD19_2_C,
+    LW_Cannabis = SD19_3_C,
+    LW_Cocaine = SD19_4_C,
+    LW_Basuco = SD19_5_C,
+    LW_Inhalant = SD19_6_C,
+    LW_Ecstasy = SD19_7_C,
+    LW_Psilocybin = SD19_8_C,
+    LW_LSD = SD19_9_C,
+    LW_Tranquilizer = SD19_10_C,
+    LW_Popper = SD19_11_C,
+    LW_Anfetamines = SD19_12_C,
+    LW_Heroine = SD19_13_C,
+    Health = SD20_1,
+    # Health and other variables
+    Illness = SD21,
+    Disease_Other = SD22_13_TEXT,
+    PCPS1_4_Other = PCPS1_4_texto,
+    eed1_7_Other = EED1_7_TEXT
+  ) |>
+  # Replace character "99" with NA for missing values
+  mutate(across(where(is.character), ~ na_if(., "99"))) |>
+  # Replace numeric 99 with NA for missing values
+  mutate(across(where(is.numeric), ~ na_if(., 99))) |>
+  # Recode gender categories into descriptive labels
+  mutate(
+    Gender = recode(
+      Gender,
+      "1" = "Male",
+      "2" = "Female",
+      "3" = "Androgynous",
+      "4" = "Trans woman",
+      "5" = "Trans man",
+      "6" = "Trans feminine",
+      "7" = "Trans masculine",
+      "8" = "Queer",
+      "9" = "Non-binary",
+      "10" = "Don't know",
+      "11" = "Other"
+    )
+  ) |>
+  # Create a broader Gender category for analysis
+  mutate(Gender = if_else(Gender %in% c(
+    "Woman", "Trans feminine", "Transexual", "Travesti", "Trans woman"
+  ),
+  "Trans woman",
+  if_else(Gender %in% c("Man", "Trans masculine", "Trans man"),
+    "Trans man",
+    "Non-binary"
+  )
+  )) |>
+  # Recode housing categories into descriptive labels
+  mutate(
+    Housing = recode(
+      Housing,
+      "1" = "Home-owner",
+      "2" = "Renting (entire home)",
+      "3" = "Living with family",
+      "4" = "Shared rental (room)",
+      "5" = "Without permanent housing"
+    )
+  ) |>
+  # Recode substance use responses from text to binary (1 = Yes, 0 = No)
+  mutate_at(
+    c(
+      "LP_Alcohol",
+      "LP_Cigarette",
+      "LP_Cannabis",
+      "LP_Cocaine",
+      "LP_Basuco",
+      "LP_Inhalant",
+      "LP_Ecstasy",
+      "LP_Psilocybin",
+      "LP_LSD",
+      "LP_Tranquilizer",
+      "LP_Popper",
+      "LP_Anfetamines",
+      "LP_Heroine",
+      "LM_Alcohol",
+      "LM_Cigarette",
+      "LM_Cannabis",
+      "LM_Cocaine",
+      "LM_Basuco",
+      "LM_Inhalant",
+      "LM_Ecstasy",
+      "LM_Psilocybin",
+      "LM_LSD",
+      "LM_TRAN",
+      "LM_Popper",
+      "LM_Anfetamines",
+      "LM_Heroine",
+      "LW_Alcohol",
+      "LW_Cigarette",
+      "LW_Cannabis",
+      "LW_Cocaine",
+      "LW_Basuco",
+      "LW_Inhalant",
+      "LW_Ecstasy",
+      "LW_Psilocybin",
+      "LW_LSD",
+      "LW_Tranquilizer",
+      "LW_Popper",
+      "LW_Anfetamines",
+      "LW_Heroine"
+    ),
+    ~ recode(.x, "1" = 1, "2" = 0)
+  ) |>
+  # Select only relevant variables
+  select(
+    -c(
+      Codigo,
+      ends_with("_TEXT"),
+      Sexualientation,
+      ends_with("_texto")
+    )
+  ) |>
+  # Recode ethnicity, farmer status, marital status, SES, and education
+  mutate(
+    Ethnicity = recode(
+      Ethnicity,
+      "1" = "Indigenous",
+      "2" = "Rrom",
+      "3" = "Afro-Colombian",
+      "4" = "Afro-Colombian",
+      "5" = "Afro-Colombian",
+      "6" = "Afro-Colombian",
+      "7" = "Afro-Colombian",
+      "8" = "Afro-Colombian",
+      "9" = "None"
+    )
+  ) |>
+  mutate(Farmer = recode(
+    Farmer,
+    "1" = "Yes",
+    "2" = "No",
+    "5" = NA_character_
+  )) |>
+  mutate(
+    Marital_Status = recode(
+      Marital_Status,
+      "1" = "Married",
+      "2" = "Single",
+      "3" = "Widow/er",
+      "4" = "Divorced",
+      "5" = "Civil union",
+      "6" = "Stable relationship"
+    )
+  ) |>
+  mutate(
+    SES = recode_factor(
+      SES,
+      "1" = "Low",
+      "2" = "Low",
+      "7" = "Low",
+      "3" = "Middle-low",
+      "4" = "Middle-high",
+      "5" = "High",
+      "6" = "High"
+    )
+  ) |>
+  mutate(
+    Education = recode_factor(
+      Education,
+      "1" = "No studies, illiterate",
+      "2" = "No studies, literate",
+      "3" = "Primary school (unfinished)",
+      "4" = "Primary school",
+      "5" = "Secondary school (unfinished)",
+      "6" = "Secondary school",
+      "7" = "Technical degree",
+      "8" = "University (unfinished)",
+      "9" = "University",
+      "10" = "Postgraduate studies"
+    )
+  ) |>
+  mutate(across(
+    c(
+      SD22_1:SD22_13,
+      EED1_1,
+      EED1_2,
+      EED1_3,
+      EED1_4,
+      EED1_5,
+      EED1_6,
+      EED1_7,
+      EED2_1:EED2_5
+    ),
+    ~ as.numeric(
+      recode(
+        as.character(.x),
+        "1" = "1",
+        "2" = "0",
+        .default = NA_character_,
+        .missing = NA_character_
+      )
+    )
+  )) |>
+  # Convert disability variables to binary (1 = Has difficulty, 0 = No difficulty)
+  mutate(across(
+    ends_with("_Difficulties"),
+    ~ case_when(.x == 99 ~ NA_real_, is.na(.x) ~ NA_real_, .x == 4 ~ 1, TRUE ~ 0)
+  )) |>
+  # Create a new variable 'difficulty_dichotomous' to indicate whether a person has
+  # any difficulties across different categories
+  mutate(Difficulty_Dichotomous = if_else(
+    # If any of the difficulties variables (e.g., Hearing_Difficulties,
+    # Speaking_Difficulties, etc.) are NA
+    rowSums(across(ends_with("_Difficulties"), ~ is.na(.))) > 0,
+    NA_real_, # Assign NA if any difficulty is missing
+    # Otherwise, check if all seven difficulties are marked as '1' (indicating impairment)
+    if_else(rowSums(across(ends_with("_Difficulties"), ~ . == 1)) == 7,
+      1, # Assign 1 if the person has all seven difficulties
+      0 # Assign 0 otherwise
+    )
+  )) |>
+  # Recode PCPS1_1 to PCPS1_5: Convert 1 to 1 (yes) and 2 to 0 (no), with NA for other values
+  mutate(across(PCPS1_1:PCPS1_5, ~ case_when(
+    . == 1 ~ 1, # Yes
+    . == 2 ~ 0, # No
+    TRUE ~ NA_real_ # Missing or other values
+  ))) |>
+  # Recode PCPS2_1 to PCPS2_5: Convert 1 to 0 (no engagement), and 2-5 to 1 (some engagement)
+  mutate(across(PCPS2_1:PCPS2_5, ~ case_when(
+    . == 1 ~ 0, # No engagement
+    . %in% 2:5 ~ 1, # Some engagement
+    TRUE ~ NA_real_ # Missing or other values
+  ))) |>
+  mutate(across(starts_with("EBD_"), ~ ifelse(is.na(.x), NA, .x - 1))) |>
+  # Compute aggregate variables summarizing different aspects
+  mutate(
+    # Count the number of substances used in the last month
+    Polyconsumption_Month = rowSums(across(LM_Alcohol:LM_Heroine, ~.), na.rm = TRUE),
+    # Count the number of reported diseases or health conditions
+    Disease_Burden = rowSums(across(SD22_1:SD22_13, ~.), na.rm = TRUE),
+    # Count the number of group memberships (sum of binary indicators)
+    Group_Membership = rowSums(across(PCPS1_1:PCPS1_5, ~.), na.rm = TRUE),
+    # Count the number of community engagement activities
+    Community_Engagement = rowSums(across(PCPS2_1:PCPS2_5, ~.), na.rm = TRUE),
+    # The following line is commented out: it would sum discrimination experiences
+    Discrimination = rowSums(across(EED1_1:EED1_7, ~.), na.rm = TRUE),
+    Discrimination = ifelse(Discrimination >= 1, "Yes", "No"),
+    Self_efficacy = if_else(rowSums(!is.na(across(starts_with("EAG_")))) >= 5,
+      rowMeans(across(starts_with("EAG_")), na.rm = TRUE),
+      NA_real_
+    ),
+    Life_Satisfaction = if_else(rowSums(!is.na(across(starts_with("SWLS_")))) >= 3,
+      rowMeans(across(starts_with("SWLS_")), na.rm = TRUE),
+      NA_real_
+    ),
+    Resilience = if_else(rowSums(!is.na(across(starts_with("EBR_")))) >= 3,
+      rowMeans(across(starts_with("EBR_")), na.rm = TRUE),
+      NA_real_
+    ),
+    Depression = if_else(rowSums(!is.na(across(starts_with("EBD_")))) >= 6,
+      rowMeans(across(starts_with("EBD_")), na.rm = TRUE),
+      NA_real_
+    ),
+    Social_Support = if_else(rowSums(!is.na(across(starts_with("MOS2_")))) >= 10,
+      rowMeans(across(starts_with("MOS2_")), na.rm = TRUE),
+      NA_real_
+    ),
+    PANAS_Positive_Affect = if_else(rowSums(!is.na(across(all_of(PANAS_P)))) >= 8,
+      rowMeans(across(all_of(PANAS_P)), na.rm = TRUE),
+      NA_real_
+    ),
+    PANAS_Negative_Affect = if_else(rowSums(!is.na(across(all_of(PANAS_N)))) >= 9,
+      rowMeans(across(all_of(PANAS_N)), na.rm = TRUE),
+      NA_real_
+    ),
+    Community_Cohesion = if_else(rowSums(!is.na(across(starts_with("PCPS3_")))) >= 2,
+      rowMeans(across(starts_with("PCPS3_")), na.rm = TRUE),
+      NA_real_
+    ),
+    # Sums of complete cases for descriptives
+    Self_efficacy_sum = if_else(rowSums(!is.na(across(starts_with("EAG_")))) >= 1,
+      rowSums(across(starts_with("EAG_")), na.rm = TRUE),
+      NA_real_
+    ),
+    Life_Satisfaction_sum = if_else(rowSums(!is.na(across(starts_with("SWLS_")))) >= 1,
+      rowSums(across(starts_with("SWLS_")), na.rm = TRUE),
+      NA_real_
+    ),
+    Resilience_sum = if_else(rowSums(!is.na(across(starts_with("EBR_")))) >= 1,
+      rowSums(across(starts_with("EBR_")), na.rm = TRUE),
+      NA_real_
+    ),
+    Depression_sum = if_else(rowSums(!is.na(across(starts_with("EBD_")))) >= 1,
+      rowSums(across(starts_with("EBD_")), na.rm = TRUE),
+      NA_real_
+    ),
+    Social_Support_sum = if_else(rowSums(!is.na(across(starts_with("MOS2_")))) >= 1,
+      rowSums(across(starts_with("MOS2_")), na.rm = TRUE),
+      NA_real_
+    ),
+  ) |>
+  # Select relevant variables
+  select(
+    Age, Gender, Ethnicity, Marital_Status, SES, Education, Housing,
+    Health, Polyconsumption_Month:Social_Support_sum
+  ) |>
+  # Convert categorical variables Housing to Job into factors
+  mutate(Housing = as.factor(Housing)) |>
+  # Convert all remaining character variables to factors
+  mutate_if(is.character, as.factor) |>
+  filter(Age >= 18)
+```
+
+## Missing Data
+
+Create a summary of missing data for each variable in the final dataset
+
+```{r message = FALSE}
+Missing_data <- data |>
+  select(-ends_with("_sum")) |> 
+  # Summarize across all columns, counting the number of NA values in each column
+  summarise(across(everything(), ~ sum(is.na(.)))) |>
+  # Convert the summary from wide format (one row, many columns) to long format
+  pivot_longer(
+    everything(), # Select all columns
+    names_to = "Variable", # Store column names in a new variable "Variable"
+    values_to = "NA_count" # Store the count of NAs in a new variable "NA_count"
+  ) |>
+  # Compute the proportion of missing values for each variable
+  mutate(Proportion = NA_count / dim(data)[1]) # Divide NA count by total number of rows
+```
+
+### Fig. \@ref(fig:fig-missing-data). Proportion of missing data
+
+To apply multi-model inference techniques such as dredge and model averaging, models must be fitted with complete data. Therefore, assessing the proportion of missing data per variable was crucial. While excessive missingness could lead to unreliable models, imputing missing values might reduce data credibility. Since no variable had an unacceptably high proportion of missing data, we opted not to impute missing values.
+
+```{r fig-missing-data, fig.height = 4, fig.width = 6, fig.cap = "Proportion of missing data per variable. Variables are ordered from highest to lowest proportion of missing values. The color gradient indicates the proportion of missingness, with darker shades representing higher percentages."}
+Missing_data |>
+  mutate_at("Variable", str_replace_all, "Self_efficacy", "Self-efficacy") |>
+  mutate_at("Variable", str_replace_all, "_", " ") |>
+  ggplot(aes(
+    x = fct_reorder(Variable, Proportion, .desc = TRUE), # Reorder variables
+    y = Proportion,
+    fill = Proportion # Use fill color to indicate proportion of missing data
+  )) +
+  geom_col() + # Create bar plot
+  # Add percentage labels on top of bars
+  geom_text(aes(label = percent(Proportion, accuracy = 1)),
+    vjust = -0.5, size = 2
+  ) +
+  # Apply color gradient: Green (low missing data), Yellow (moderate), Red (high missing data)
+  scale_fill_viridis_c(
+    option = "plasma", # Define color range
+    direction = -1, # Reverse the color scale
+    labels = percent_format(accuracy = 1), # Convert legend values to percentage format
+    alpha = 0.7
+  ) +
+  # Convert Y-axis (proportion of missing data) to a percentage scale
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+  # Add axis labels
+  labs(
+    y = "Percentage of Missing Data", # Label for Y-axis
+    x = "Variable" # Label for X-axis
+  ) +
+  # Use a minimal theme for a cleaner visual appearance
+  theme_minimal() +
+  # Rotate X-axis labels for better readability
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+# Descriptives
+
+## Table \@ref(tab:tab-desc-demog). Socio-demographic characteristics by gender
+
+```{r tab-desc-demog}
+data |>
+  select(Age:Housing) |>
+  rename_with(~ gsub("_", " ", .x)) |>
+  tbl_summary(by = Gender,
+              statistic = all_continuous() ~ "{mean}±{sd}",
+              digits = all_continuous() ~ 2,
+              missing_text = "Missing data") |>
+  add_n() |> # add column with total number of non-missing observations
+  bold_labels() |>
+  remove_footnote_header(columns = all_stat_cols()) |>
+  as_kable_extra(
+    format = "latex",
+    linesep = "",
+    booktabs = TRUE,
+    caption = "Sociodemographic characteristics of the study participants
+              by gender identity"
+  ) |>
+  kable_styling(latex_options = c("scale_down", "HOLD_position")) |>
+  footnote(
+    general = "Age is reported as mean ± SD; all other variables are shown as frequency 
+              (\\\\%).",
+    threeparttable = TRUE,
+    footnote_as_chunk = TRUE,
+    escape = FALSE
+  )
+```
+
+## Table \@ref(tab:tab-desc-scores). Measured variables by gender
+
+```{r tab-desc-scores}
+data |>
+  select(
+    Gender, 
+    Disease_Burden, 
+    Group_Membership, 
+    Community_Engagement,
+    Discrimination, 
+    Polyconsumption_Month, 
+    Self_efficacy_sum, 
+    Life_Satisfaction_sum,
+    Resilience_sum, 
+    Depression_sum, 
+    Social_Support_sum, 
+    PANAS_Positive_Affect, 
+    PANAS_Negative_Affect,
+    Community_Cohesion
+  ) |>
+  rename_with(~ gsub("Self_efficacy", "Self-efficacy", .x)) |>
+  rename_with(~ gsub("_sum", " (sum)", .x)) |>
+  rename_with(~ gsub("_", " ", .x)) |>
+  tbl_summary(by = Gender,
+              statistic = all_continuous() ~ "{mean} ± {sd}",
+              missing_text = "Missing data") |>
+  add_n() |> # add column with total number of non-missing observations
+  bold_labels() |>
+  remove_footnote_header(columns = all_stat_cols()) |>
+  as_kable_extra(
+    format = "latex",
+    linesep = "",
+    booktabs = TRUE,
+    caption = "Other sociodemographic, health, and psychosocial characteristics
+              of the study participants by gender identity"
+  ) |>
+  kable_styling(latex_options = c("scale_down", "HOLD_position")) |>
+  footnote(
+    general = "Continuous variables are reported as mean ± SD, and categorical variables 
+              as frequency (\\\\%). Missing data indicate the number of participants with 
+              insufficient responses to compute the corresponding score. For interpretability,
+              Self-efficacy, Life Satisfaction, Resilience, Depression, and Social Support are
+              shown as sum scores, calculated only for participants with complete item 
+              responses.",
+    threeparttable = TRUE,
+    footnote_as_chunk = TRUE,
+    escape = FALSE
+  )
+```
+
+## Figure \@ref(fig:categorical-plot). Distribution of participants' categorical and ordinal variables by gender
+
+```{r categorical-plot, results = "hold", fig.height = 8, fig.cap = "Distribution of categorical and ordinal variables by gender. Values represent the percentage of responses in each category. To facilitate comparison across genders, percentages were calculated within each gender group. Additional descriptive statistics are provided in Table \\@ref(tab:tab-desc-demog).", warning = FALSE, message = FALSE}
+# Define a custom colour palette using the 'plasma' viridis option, 
+# excluding the light yellow end by setting end = 0.75
+custom_palette <- viridis::viridis(3, option = "plasma", begin = 0, end = 0.75)
+
+p_desc1 <- data |>
+  select(Gender, 
+         Ethnicity, 
+         Marital_Status, 
+         SES,
+         Education,
+         Housing,
+         Disease_Burden, 
+         Group_Membership, 
+         Community_Engagement,
+         Discrimination) |>
+  mutate_all(as.factor) |> 
+  pivot_longer(
+    cols = -Gender,
+    names_to = "Variable", values_to = "Response"
+  ) |>
+  mutate(
+    Response = as.factor(Response),
+    Variable = str_wrap(Variable, width = 20)
+  ) |>
+  group_by(Gender, Variable, Response) |>
+  summarise(n = n(), .groups = "drop") |>
+  group_by(Gender, Variable) |>
+  mutate(Percentage = n / sum(n) * 100,
+         Variable = str_replace_all(Variable, "_", " ")) |> 
+  # Plot proportions instead of counts
+  ggplot(aes(x = Response, y = Percentage, fill = Gender)) +
+  geom_col(position = position_dodge(width = 0.9)) +
+  facet_wrap(~Variable, scales = "free_x", ncol = 5) +
+  scale_y_continuous(labels = scales::percent_format(scale = 1)) +  # Show axis in %
+  scale_fill_manual(values = custom_palette) +
+  labs(x = NULL, y = "Percentage") +
+  theme_minimal() +
+  theme(legend.position = "bottom",
+        axis.text.x = element_text(angle = 52, hjust = 1))
+p_desc1
+```
+
+## Figure \@ref(fig:density-plot). Distribution of participants' measured numeric variables by gender
+
+```{r density-plot, results = "hold", fig.height = 6, fig.cap = "Kernel density distribution of measured numeric variables by gender. Coloured dashed lines represent mean values. For interpretability, Self-efficacy, Life Satisfaction, Resilience, Depression, and Social Support are shown as sum scores, calculated only for participants with complete item responses. Detailed descriptives are found in Table \\@ref(tab:tab-desc-scores).", warning = FALSE, message = FALSE}
+# Transform the data
+desc_long_data <- data |>
+  select(
+    Gender, 
+    Age,
+    Polyconsumption_Month, 
+    Self_efficacy_sum, 
+    Life_Satisfaction_sum,
+    Resilience_sum, 
+    Depression_sum, 
+    Social_Support_sum, 
+    PANAS_Positive_Affect, 
+    PANAS_Negative_Affect,
+    Community_Cohesion
+  ) |>
+  pivot_longer(
+    cols = -Gender, 
+    names_to = "Variable", values_to = "Value"
+  ) |>
+  mutate(
+    Variable = str_replace_all(Variable, "Self_efficacy", "Self-efficacy"),
+    Variable = str_replace_all(Variable, "_sum", " (sum)"),
+    Variable = str_replace_all(Variable, "_", " "),
+    Variable = str_wrap(Variable, width = 30)
+  )
+
+# Calculate group means for each Gender × Variable
+desc_means <- desc_long_data |>
+  group_by(Gender, Variable) |>
+  summarise(Mean = mean(Value, na.rm = TRUE), .groups = "drop")
+
+# Create the plot
+p_desc2 <- ggplot(desc_long_data, aes(Value, fill = Gender, colour = Gender)) +
+  geom_density(alpha = 0.6) +
+  geom_vline(data = desc_means, 
+             aes(xintercept = Mean, 
+                 colour = Gender), 
+             linetype = "dashed", size = 0.8) +
+  facet_wrap(~Variable, scales = "free", ncol = 5) +
+  labs(y = "Density", x = NULL) +
+  scale_fill_manual(values = custom_palette) +
+  scale_colour_manual(values = custom_palette) +
+  theme_minimal() +
+  theme(legend.position = "bottom")
+p_desc2
+```
+
+## Table \@ref(tab:tab-corrs). Correlations
+
+```{r tab-corrs}
+# Compute correlations for all participants combined
+dat.corr.ALL <- data |>
+  select(Age, Polyconsumption_Month:Community_Cohesion, -Discrimination) |> # Numeric variables
+  corr.stars() |>
+  tail(-1) |>
+  rownames_to_column(var = " ")
+
+# Compute correlations for non-binary participants
+dat.corr.NB <- data |>
+  filter(Gender == "Non-binary") |> # Select only non binary
+  select(Age, Polyconsumption_Month:Community_Cohesion, -Discrimination) |> # Numeric variables
+  corr.stars() |> # Compute correlation matrix with significance stars
+  tail(-1) |>
+  rownames_to_column(var = " ") # Move row names to a column
+
+# Compute correlations for trans men
+dat.corr.TM <- data |>
+  filter(Gender == "Trans man") |> # Select only trans men
+  select(Age, Polyconsumption_Month:Community_Cohesion, -Discrimination) |> # Numeric variables
+  corr.stars() |>
+  tail(-1) |>
+  rownames_to_column(var = " ")
+
+# Compute correlations for trans women
+dat.corr.TW <- data |>
+  filter(Gender == "Trans woman") |> # Select only trans women
+  select(Age, Polyconsumption_Month:Community_Cohesion, -Discrimination) |> # Numeric variables
+  corr.stars() |>
+  tail(-1) |>
+  rownames_to_column(var = " ")
+
+# Format and combine the correlation tables
+bind_rows(dat.corr.ALL, dat.corr.NB, dat.corr.TM, dat.corr.TW) |>
+  rename_with(~ gsub("Self_efficacy", "Self-efficacy", .x)) |>
+  rename_with(~ gsub("_", " ", .x)) |>
+  mutate_at(" ", str_replace_all, "Self_efficacy", "Self-efficacy") |>
+  mutate_at(" ", str_replace_all, "_", " ") |>
+  kable(
+    digits = 2, booktabs = TRUE,
+    align = c("l", rep("c", 12)),
+    linesep = "",
+    caption = "Correlations between measured variables", escape = FALSE
+  ) |>
+  # Add grouped row labels for each participant group
+  pack_rows("All participants",
+    start_row = 1, end_row = 12, bold = FALSE,
+    background = "lightgray"
+  ) |>
+  pack_rows("Non binary",
+    start_row = 13, end_row = 24, bold = FALSE,
+    background = "lightgray"
+  ) |>
+  pack_rows("Trans men",
+    start_row = 25, end_row = 36, bold = FALSE,
+    background = "lightgray"
+  ) |>
+  pack_rows("Trans women",
+    start_row = 37, end_row = 48, bold = FALSE,
+    background = "lightgray"
+  ) |>
+  # Apply LaTeX styling
+  kable_styling(latex_options = c("HOLD_position", "scale_down")) |>
+  column_spec(2:10, width = "2.2cm") |> # Adjust column widths
+  # Add footnote explaining correlation significance levels
+  footnote(
+    general = paste0(
+      "Values represent Spearman correlation coefficients ($\\\\rho$). ",
+      "For significance, $^{\\\\dagger}p$ < 0.1, *$p$ < 0.05, ",
+      "**$p$ < 0.01, ***$p$ < 0.001. ",
+      "Significant correlations are in bold."
+    ),
+    threeparttable = TRUE, footnote_as_chunk = TRUE, escape = FALSE
+  ) |>
+  landscape() # Rotate table for better readability in LaTeX
+```
+
+# Multi-model Inference  
+
+This section outlines the multi-model inference approach used to examine predictors of various outcome variables. The strategy follows a systematic model selection process, accounting for model uncertainty.  
+
+For each outcome variable, we repeated the following steps:  
+
+\begin{enumerate}
+  \item \textbf{Data Preparation}  
+    \begin{itemize}
+      \item Relevant predictors are selected from the cleaned dataset.
+      \item Missing values are removed to ensure complete case analysis\footnote{To maximize the number of non-missing cases, we created separate datasets for each outcome variable. Since models generated by \texttt{dredge()} must not contain missing values (NA) to remain comparable, this approach ensures that each model includes the largest possible sample size.}
+    \end{itemize}
+
+  \item \textbf{Global Model Specification}  
+    \begin{itemize}
+      \item A linear model (\texttt{lm}) is specified, including a broad set of demographic, psychological, and social predictors.
+      \item This full model represents all hypothesized influences on the outcome.
+    \end{itemize}
+
+  \item \textbf{Model Selection via \texttt{dredge()}}  
+    \begin{itemize}
+      \item The \texttt{MuMIn::dredge()} function generates all possible \textbf{nested models} from the global model.
+      \item Models are ranked by Akaike’s Information Criterion corrected for small sample sizes ($AICc$).
+      \item This helps identify the most parsimonious models while considering model uncertainty.
+    \end{itemize}
+
+  \item \textbf{Model Averaging (\texttt{model.avg})}  
+    \begin{itemize}
+      \item Models with $\Delta AICc$ < 2 (within two $AICc$ units of the top model) are averaged.
+      \item This produces shrinkage estimates, ensuring robust coefficient estimates.
+    \end{itemize}
+
+  \item \textbf{Results Interpretation}  
+    \begin{itemize}
+      \item Tables summarize the coefficient estimates, importance values, and significance levels.
+      \item Figures visualize term estimates, confidence intervals, and predictor importance.
+    \end{itemize}
+\end{enumerate}
+
+This process is repeated for each outcome variable in the following sections.  
+
+## Life Satisfaction model
+
+This section details the modelling process for Life Satisfaction, including data preparation, model selection using Akaike’s Information Criterion corrected for small sample sizes ($AICc$), and model averaging based on the best-ranked models.
+
+The global model includes a broad set of predictors representing demographic, psychological, and social factors, allowing us to explore their relative contributions to Life Satisfaction. The model selection procedure identifies the most parsimonious models while accounting for model uncertainty.
+
+```{r}
+dat_LS <- data |>
+  select(
+    Life_Satisfaction, Age, Gender, Ethnicity, Marital_Status, Education, Housing,
+    Self_efficacy, Community_Cohesion, Depression, Social_Support, Polyconsumption_Month,
+    Disease_Burden, Discrimination, Group_Membership, Community_Engagement
+  ) |>
+  drop_na()
+
+global_LS <- lm(
+  Life_Satisfaction ~ Age + Gender + Ethnicity + Marital_Status + Education +
+    Housing + Self_efficacy + Community_Cohesion + Depression +
+    Social_Support + Polyconsumption_Month + Disease_Burden + Discrimination +
+    Group_Membership + Community_Engagement,
+  data = dat_LS,
+  na.action = "na.fail"
+)
+```
+
+### Dredge
+
+To identify the best-fitting models, we perform automated model selection using `MuMIn::dredge()`, which fits all possible models nested within the global model and ranks them based on $AICc$. This helps determine the most important predictors of Life Satisfaction while considering model uncertainty.
+
+```{r message = FALSE, warning = FALSE, cache = TRUE}
+dr_LS <- dredge(
+  global_LS,
+  # trace = 2 # uncomment to see progress bar
+)
+```
+
+#### Fig. \@ref(fig:fig-dredge-LS). Dredge results of the Life Satisfaction model
+
+The plot below visualizes the model selection results, displaying the top 100 models ranked by $AICc$. Each row represents an individual model, with blue cells indicating included predictors. The height of each row reflects the model’s Akaike weight ($\omega$), representing its relative support in the model set.
+
+```{r fig-dredge-LS, fig.height = 8, fig.cap = LS_dredge_pĺot$caption}
+LS_dredge_pĺot <- dredge.plot(dr_LS) # Run the function and store the result
+```
+
+### Average model
+
+To account for model uncertainty, we compute an averaged model that combines estimates from all models with $\Delta AICc$ < 2 (i.e., models within two $AICc$ units of the best-supported model). This approach produces more robust and conservative parameter estimates, reducing overconfidence in any single model.
+
+```{r}
+avg_LS <- model.avg(dr_LS, subset = delta < 2, fit = TRUE)
+```
+
+#### Table \@ref(tab:tab-avg-LS). Term estimates for the Life Satisfaction model
+
+The table below presents coefficient estimates from the full average model, including 95% confidence intervals, standard errors, and significance levels. 
+
+```{r tab-avg-LS, message = FALSE, warning = FALSE}
+tab_avg_LS <- avg.mod.summary(avg_LS, data = dat_LS)
+tab_avg_LS$table
+```
+
+#### Fig. \@ref(fig:fig-avg-LS). Term estimates for the Life Satisfaction model
+
+This figure represents parameter estimates from the model-averaged coefficients.
+
+```{r fig-avg-LS, warning = FALSE, fig.height = 6, fig.width = 8, fig.cap = "Term estimates with 95% confidence intervals for the final model average of the best (AICc $\\Delta$ < 2) models predicting Life Satisfaction. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the averaged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
+fig_avg_LS <- avg.mod.plot(avg_LS)
+fig_avg_LS
+```
+
+## PANAS Positive Affect model
+
+This section details the modelling process for PANAS Positive Affect, including data preparation, model selection using Akaike’s Information Criterion corrected for small sample sizes ($AICc$), and model averaging based on the best-ranked models.
+
+The global model includes a broad set of predictors representing demographic, psychological, and social factors, allowing us to explore their relative contributions to PANAS Positive Affect. The model selection procedure identifies the most parsimonious models while accounting for model uncertainty.
+
+```{r}
+dat_PANAS_P <- data |>
+  select(
+    PANAS_Positive_Affect, Age, Gender, Ethnicity, Marital_Status, Education, Housing,
+    Self_efficacy, Community_Cohesion, Depression, Social_Support, Polyconsumption_Month,
+    Disease_Burden, Discrimination, Group_Membership, Community_Engagement
+  ) |>
+  drop_na()
+
+global_PANAS_P <- lm(
+  PANAS_Positive_Affect ~ Age + Gender + Ethnicity + Marital_Status + Education +
+    Housing + Self_efficacy + Community_Cohesion + Depression +
+    Social_Support + Polyconsumption_Month + Disease_Burden + Discrimination +
+    Group_Membership + Community_Engagement,
+  data = dat_PANAS_P,
+  na.action = "na.fail"
+)
+```
+
+### Dredge
+
+To identify the best-fitting models, we perform automated model selection using `MuMIn::dredge()`, which fits all possible models nested within the global model and ranks them based on $AICc$. This helps determine the most important predictors of PANAS Positive Affect while considering model uncertainty.
+
+```{r message = FALSE, warning = FALSE, cache = TRUE}
+dr_PANAS_P <- dredge(
+  global_PANAS_P,
+  # trace = 2 # uncomment to see progress bar
+)
+```
+
+#### Fig. \@ref(fig:fig-dredge-PANAS-P). Dredge results of the PANAS Positive Affect model
+
+The plot below visualizes the model selection results, displaying the top 100 models ranked by $AICc$. Each row represents an individual model, with blue cells indicating included predictors. The height of each row reflects the model’s Akaike weight ($\omega$), representing its relative support in the model set.
+
+```{r fig-dredge-PANAS-P, fig.height = 8, fig.cap = PANAS_P_dredge_pĺot$caption}
+PANAS_P_dredge_pĺot <- dredge.plot(dr_PANAS_P) # Run the function and store the result
+```
+
+### Average model
+
+To account for model uncertainty, we compute an averaged model that combines estimates from all models with $\Delta AICc$ < 2 (i.e., models within two $AICc$ units of the best-supported model). This approach produces more robust and conservative parameter estimates, reducing overconfidence in any single model.
+
+```{r}
+avg_PANAS_P <- model.avg(dr_PANAS_P, subset = delta < 2, fit = TRUE)
+```
+
+#### Table \@ref(tab:tab-avg-PANAS-P). Term estimates for the PANAS Positive Affect model
+
+The table below presents coefficient estimates from the full average model, including 95% confidence intervals, standard errors, and significance levels. 
+
+```{r tab-avg-PANAS-P, message = FALSE, warning = FALSE}
+tab_avg_PANAS_P <- avg.mod.summary(avg_PANAS_P, data = dat_PANAS_P)
+tab_avg_PANAS_P$table
+```
+
+#### Fig. \@ref(fig:fig-avg-PANAS-P). Term estimates for the PANAS Positive Affect model
+
+This figure represents parameter estimates from the model-averaged coefficients.
+
+```{r fig-avg-PANAS-P, warning = FALSE, fig.height = 6, fig.width = 8, fig.cap = "Term estimates with 95% confidence intervals for the final model average of the best (AICc $\\Delta$ < 2) models predicting PANAS Positive Affect. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the averaged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
+fig_avg_PANAS_P <- avg.mod.plot(avg_PANAS_P)
+fig_avg_PANAS_P
+```
+
+## PANAS Negative Affect model
+
+This section details the modelling process for PANAS Negative Affect, including data preparation, model selection using Akaike’s Information Criterion corrected for small sample sizes ($AICc$), and model averaging based on the best-ranked models.
+
+The global model includes a broad set of predictors representing demographic, psychological, and social factors, allowing us to explore their relative contributions to PANAS Negative Affect. The model selection procedure identifies the most parsimonious models while accounting for model uncertainty.
+
+```{r}
+dat_PANAS_N <- data |>
+  select(
+    PANAS_Negative_Affect, Age, Gender, Ethnicity, Marital_Status, Education, Housing,
+    Self_efficacy, Community_Cohesion, Depression, Social_Support, Polyconsumption_Month,
+    Disease_Burden, Discrimination, Group_Membership, Community_Engagement
+  ) |>
+  drop_na()
+
+global_PANAS_N <- lm(
+  PANAS_Negative_Affect ~ Age + Gender + Ethnicity + Marital_Status + Education +
+    Housing + Self_efficacy + Community_Cohesion + Depression +
+    Social_Support + Polyconsumption_Month + Disease_Burden + Discrimination +
+    Group_Membership + Community_Engagement,
+  data = dat_PANAS_N,
+  na.action = "na.fail"
+)
+```
+
+### Dredge
+
+To identify the best-fitting models, we perform automated model selection using `MuMIn::dredge()`, which fits all possible models nested within the global model and ranks them based on $AICc$. This helps determine the most important predictors of PANAS Negative Affect while considering model uncertainty.
+
+```{r message = FALSE, warning = FALSE, cache = TRUE}
+dr_PANAS_N <- dredge(
+  global_PANAS_N,
+  # trace = 2 # uncomment to see progress bar
+)
+```
+
+#### Fig. \@ref(fig:fig-dredge-PANAS-N). Dredge results of the PANAS Negative Affect model
+
+The plot below visualizes the model selection results, displaying the top 100 models ranked by $AICc$. Each row represents an individual model, with blue cells indicating included predictors. The height of each row reflects the model’s Akaike weight ($\omega$), representing its relative support in the model set.
+
+```{r fig-dredge-PANAS-N, fig.height = 8, fig.cap = PANAS_N_dredge_pĺot$caption}
+PANAS_N_dredge_pĺot <- dredge.plot(dr_PANAS_N) # Run the function and store the result
+```
+
+### Average model
+
+To account for model uncertainty, we compute an averaged model that combines estimates from all models with $\Delta AICc$ < 2 (i.e., models within two $AICc$ units of the best-supported model). This approach produces more robust and conservative parameter estimates, reducing overconfidence in any single model.
+
+```{r}
+avg_PANAS_N <- model.avg(dr_PANAS_N, subset = delta < 2, fit = TRUE)
+```
+
+#### Table \@ref(tab:tab-avg-PANAS-N). Term estimates for the PANAS Negative Affect model
+
+The table below presents coefficient estimates from the full average model, including 95% confidence intervals, standard errors, and significance levels. 
+
+```{r tab-avg-PANAS-N, message = FALSE, warning = FALSE}
+tab_avg_PANAS_N <- avg.mod.summary(avg_PANAS_N, data = dat_PANAS_N)
+tab_avg_PANAS_N$table
+```
+
+#### Fig. \@ref(fig:fig-avg-PANAS-N). Term estimates for the PANAS Negative Affect model
+
+This figure represents parameter estimates from the model-averaged coefficients.
+
+```{r fig-avg-PANAS-N, warning = FALSE, fig.height = 6, fig.width = 8, fig.cap = "Term estimates with 95% confidence intervals for the final model average of the best (AICc $\\Delta$ < 2) models predicting PANAS Negative Affect. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the averaged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
+fig_avg_PANAS_N <- avg.mod.plot(avg_PANAS_N)
+fig_avg_PANAS_N
+```
+
+-----------------------------------------------------------------------
+
+```{=latex}
+\closesupplement
+```
+
+# Final figures and tables
+
+## Fig. \@ref(fig:fig-full-desc). Distribution of participants' measured variables by gender
+
+```{r fig-full-desc, warning = FALSE, fig.height = 10, fig.width = 10, fig.cap = "Distribution of variables by gender. \\textbf{(a)} Categorical and ordinal variables. Values represent the percentage of responses in each category. To facilitate comparison across genders, percentages were calculated within each gender group. \\textbf{(b)} Kernel density distribution of measured numeric variables. Coloured dashed lines represent mean values. For interpretability, Self-efficacy, Life Satisfaction, Resilience, Depression, and Social Support are shown as sum scores, calculated only for participants with complete item responses. Additional descriptive statistics are provided in Tables \\@ref(tab:tab-desc-demog) and \\@ref(tab:tab-desc-scores)."}
+ggarrange(p_desc1 +
+            facet_wrap(~Variable, ncol = 3, scales = "free"), 
+          p_desc2 +
+            facet_wrap(~Variable, ncol = 2, scales = "free",
+                       labeller = label_wrap_gen(width = 17)),
+          common.legend = TRUE,
+          legend = "bottom",
+          labels = "auto",
+          ncol = 2,
+          widths = c(2,1))
+```
+
+## Fig. \@ref(fig:fig-full-dredge). Distribution of participants' measured variables by gender
+
+```{r fig-full-dredge, warning = FALSE, fig.width = 10, fig.height = 7, fig.cap = "Model selection plot. \\textbf{(a)} Life Satisfaction; \\textbf{(b)} PANAS Positive Affect; \\textbf{(c)} PANAS Negative Affect. In all cases, each row represents one of the top 100 candidate models (ranked by $AICc$) out of 32,768 fitted models. Purple cells indicate included terms, with row height corresponding to each model’s relative support based on its Akaike weight ($\\omega$). Numbers on the right identify the top models."}
+ggarrange(as.ggplot(image_read_pdf("PDF_plots/Life_Satisfaction.pdf")), 
+          as.ggplot(image_read_pdf("PDF_plots/PANAS_Positive_Affect.pdf")),
+          as.ggplot(image_read_pdf("PDF_plots/PANAS_Negative_Affect.pdf")),
+          labels = "auto",
+          ncol = 2,
+          nrow = 2)
+
+bla <- ggplot() +
+  background_image(image_read_pdf("PDF_plots/Life_Satisfaction.pdf", density = 600)) +
+  theme(plot.margin = margin(t=0.2, l=1, r=0, b=0, unit = "cm"))
+```
+
+## Tab. \@ref(tab:tab-avg-mods). Term estimates for the three final averaged model
+
+```{r tab-avg-mods}
+tab_avg_LS$coefficients |> 
+  full_join(tab_avg_PANAS_P$coefficients, by = "term")  |> 
+  full_join(tab_avg_PANAS_N$coefficients, by = "term") |> 
+  arrange(term) |> 
+  kable(digits = 3,
+        booktabs = TRUE,
+        linesep = "",
+        align = c("l", rep("c", 12)),
+        caption = "Coefficient estimates for the three final average models",
+        col.names = c("Term", 
+                      rep(c("$B$", "$95 \\% CIs$", "$z$", "$p$"), times = 3)),
+        escape = FALSE
+  ) |>
+  kable_styling(latex_options = c("scale_down", "HOLD_position")) |>
+  add_header_above(c(" ",
+                     "Life Satisfaction" = 4,
+                     "PANAS Positive Affect" = 4,
+                     "PANAS Negative Affect" = 4)) |> 
+  column_spec(c(5, 9), border_right = TRUE) |>
+  footnote(
+    general = paste0(
+      "This table includes estimates based on full model averages. ",
+      "The full model average ensures that all predictors present in any
+      averaged model are included, with coefficients set to zero when absent. 
+      As a consequence, it acts as a shrinkage ",
+      "estimator, making estimates more conservative. ",
+      "$B$ represents unstandardized model coefficients for each of the three models:
+      Life Satisfaction (", tab_avg_LS$reference_levels, "), 
+      PANAS Positive Afffect(", tab_avg_PANAS_P$reference_levels, "), 
+      and PANAS Negative Afffect(", tab_avg_PANAS_N$reference_levels, ").",
+      " Significant effects are in bold."
+    ),
+    threeparttable = TRUE,
+    footnote_as_chunk = TRUE,
+    escape = FALSE
+  )
+```
+
+## Fig. \@ref(fig:fig-avg-mods). Term estimates for the three final averaged model
+
+This figure represents parameter estimates from the model-averaged coefficients.
+
+```{r fig-avg-mods, warning = FALSE, fig.height = 10, fig.width = 10, fig.cap = "Term estimates with 95% confidence intervals for the final model averages of the best (AICc $\\Delta$ < 2) models predicting  \\textbf{(a)} Life Satisfaction, \\textbf{(b)} PANAS Positive Affect, and \\textbf{(c)} PANAS Negative Affect. Importance is the proportion of averaged models in which a term appears (i.e. an Importance of 0.5 means that the term is included in half the averaged models, and an Importance of 1.0 means that all the averaged models included that term). Larger and darker points indicate higher importance. Confidence intervals show uncertainty in effect size estimates. For term significance:  $\\dagger$ $p$ < 0.10; \\* $p$ < 0.05; \\*\\* $p$ < 0.01; \\*\\*\\* $p$ < 0.001; \\*\\*\\*\\* $p$ < 0.0001."}
+ggarrange(
+  fig_avg_LS +
+    labs(subtitle = "Life Satistaction") +
+    theme(legend.position = "none"),
+  fig_avg_PANAS_P +
+    labs(subtitle = "PANAS Possitive Affect") +
+    theme(legend.position = "none"),
+  fig_avg_PANAS_N +
+    labs(subtitle = "PANAS Negative Affect") +
+    theme(legend.position = "none"),
+  as_ggplot(get_legend(fig_avg_LS)),
+  ncol = 2,
+  nrow = 2,
+  labels = c("a", "b", "c", NULL)
+)
+```
+
+-----------------------------------------------------------------------
+
+# Session info (for reproducibility) {#session}
+
+```{r results = "hold"}
+# Display session information for reproducibility
+# - Uses `pander()` for better formatting
+# - `locale = FALSE` to exclude locale-specific info
+library(pander)
+pander(sessionInfo(), locale = FALSE)
+```
+
+------------------------------------------------------------------------
+
+# Supplementary references {#refs}
+
+\begin{multicols}{2}
+\AtNextBibliography{\footnotesize}
+\printbibliography[heading=none]
+\normalsize
+\end{multicols}
+
+\def\printbibliography{}
