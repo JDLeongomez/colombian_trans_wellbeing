@@ -1,4 +1,4 @@
-Data and code from: **Reyes, M. F., Levy, N., Maldonado Salamanca, D., Lyons, M., \&  Leongómez, J. D.,  (in prep). *Mental health and subjective well-being of trans and non-binary population in Colombia*.**
+Data and code from: **Reyes, M. F., Levy, N., Maldonado Salamanca, D., Lyons, M., & Leongómez, J. D. (2025). Mental health and subjective well-being of trans and non-binary population in Colombia. *Neuroscience, 590*, 72–82. https://doi.org/10.1016/j.neuroscience.2025.10.039**
 
 This repository is linked between, and available at both,
 
