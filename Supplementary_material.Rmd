@@ -29,7 +29,6 @@ date: "`r if (.Platform$OS.type == 'windows') { Sys.setlocale('LC_TIME','English
 
 output:
   bookdown::pdf_document2:
-    citation_package: biblatex
     highlight: zenburn
     number_sections: yes
     keep_tex:  false
@@ -47,6 +46,11 @@ editor_options:
 geometry: margin=2cm
 
 header-includes: 
+  \usepackage[british]{babel}
+  \usepackage{csquotes}
+  \usepackage[style=apa,backend=biber]{biblatex}
+  \DeclareLanguageMapping{british}{british-apa}
+  \usepackage{orcidlink}
   \usepackage{caption} 
   \captionsetup[figure]{position=above}
   \setlength{\headheight}{15pt}
@@ -59,15 +63,10 @@ header-includes:
   \lhead{Reyes et al.} 
   \rhead{Supplementary Material - \textit{Trans and non-binary mental health in Colombia}}
   \renewcommand{\abstractname}{Description} 
-  \usepackage[british]{babel}
-  \usepackage{csquotes}
-  \usepackage[style=apa,backend=biber]{biblatex}
-  \DeclareLanguageMapping{british}{british-apa}
   \usepackage{hanging}
   \usepackage{amsthm,amssymb,amsfonts}
   \usepackage{tikz,lipsum,lmodern}
   \usepackage{multicol}
-  \usepackage{orcidlink}
   \newcommand{\opensupplement}{\setcounter{table}{0}
     \renewcommand{\thetable}{S\arabic{table}} \setcounter{figure}{0}
     \renewcommand{\thefigure}{S\arabic{figure}}}
@@ -114,7 +113,7 @@ This document contains all code, and step by step explanations for all analyses,
 
 ```{=latex}
 \begin{hangparas}{.25in}{1}
-Reyes, M. F., Levy, N., Maldonado Salamanca, D., Lyons, M., \&  Leongómez, J. D. (in prep). \textit{Mental health and subjective well-being of trans and non-binary population in Colombia}
+Reyes, M. F., Levy, N., Maldonado Salamanca, D., Lyons, M., \&  Leongómez, J. D. (2025). Mental health and subjective well-being of trans and non-binary population in Colombia. \textit{Neuroscience, 590}, 72–82. \url{https://doi.org/10.1016/j.neuroscience.2025.10.039}
 \end{hangparas}
 ```
 
